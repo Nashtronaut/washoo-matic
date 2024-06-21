@@ -4,14 +4,20 @@
   import type { GameInfo } from "./types.ds";
 
   export let gameInfo: GameInfo;
+  export let showStats: boolean;
   let mounted = false;
   let manuallyBustConfirmation = false;
   let resetConfirmation = false;
 
   onMount(() => {
     const container = document.getElementById("full-container");
-    const height = container!.offsetHeight;
-    container!.style.height = `${height}px`;
+
+    if (!gameInfo.historyMountSize) {
+      const height = container!.offsetHeight;
+      gameInfo.historyMountSize = height;
+    }
+    
+    container!.style.height = `${gameInfo.historyMountSize}px`;
     mounted = true;
   });
 
@@ -117,34 +123,47 @@
   </div>
 
   {#if !manuallyBustConfirmation && !resetConfirmation}
-    <div class="flex justify-between items-center w-full text-xs">
-      <button
-        on:click|preventDefault={() => (manuallyBustConfirmation = true)}
-        class="flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-      >
-        <span
-          class="bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-          >Bust</span
+    <div class="flex justify-evenly items-center w-full text-xs gap-4">
+      <div class="flex flex-col gap-2 w-full">
+        <button
+          on:click|preventDefault={() => (manuallyBustConfirmation = true)}
+          class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
         >
-      </button>
-      <button
-        on:click|preventDefault={() => (resetConfirmation = true)}
-        class="flex justify-center items-center bg-yellow-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-      >
-        <span
-          class="bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-          >Reset</span
+          <span
+            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+            >Bust</span
+          >
+        </button>
+        <button
+          on:click|preventDefault={() => (resetConfirmation = true)}
+          class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
         >
-      </button>
-      <button
-        on:click|preventDefault={undoLastShot}
-        class="flex justify-center items-center bg-purple-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-      >
-        <span
-          class="bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-          >Undo</span
+          <span
+            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+            >Reset</span
+          >
+        </button>
+      </div>
+      <div class="flex flex-col gap-2 w-full">
+        <button
+          on:click|preventDefault={undoLastShot}
+          class="w-full flex justify-center items-center bg-gray-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
         >
-      </button>
+          <span
+            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+            >Undo</span
+          >
+        </button>
+        <button
+          on:click|preventDefault={() => showStats = true}
+          class="w-full flex justify-center items-center bg-green-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
+        >
+          <span
+            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+            >Stats</span
+          >
+        </button>
+      </div>
     </div>
   {:else if manuallyBustConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">

@@ -10,8 +10,20 @@
       {
         shooter: gameInfo.players[Number(gameInfo.currentPlayer)],
         score: score,
+        busted: false,
       },
     ];
+
+    const busted = checkForBustedShot(
+      gameInfo.rounds[gameInfo.rounds.length - 1],
+      gameInfo,
+    );
+
+    if (busted) {
+      gameInfo.rounds[gameInfo.rounds.length - 1].tracking[
+        gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length - 1
+      ].busted = true;
+    }
 
     if (gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length === 4) {
       gameInfo.round = gameInfo.round.slice(0, -1) + "B";
@@ -84,7 +96,9 @@
       redTotal: 0,
       blueTotal: 0,
     };
-    gameInfo.currentPlayer = Number(determineNextPlayerAfterRound(currentRound));
+    gameInfo.currentPlayer = Number(
+      determineNextPlayerAfterRound(currentRound)
+    );
     gameInfo.rounds = [...gameInfo.rounds, newRound];
     gameInfo.round = Number(gameInfo.round.slice(0, -1)) + 1 + "A";
   };
@@ -92,7 +106,7 @@
   const determineNextPlayerAfterRound = (currentRound: {
     tracking: { shooter: { color: string }; score: number }[];
   }) => {
-    if (!gameInfo.currentPlayer) return null;
+    if (gameInfo.currentPlayer === null) return null;
 
     const redTotal = currentRound.tracking
       .filter((shot: any) => shot.shooter.color === "red")
@@ -102,7 +116,6 @@
       .filter((shot: any) => shot.shooter.color === "blue")
       .reduce((acc: number, shot: any) => acc + shot.score, 0);
 
-      
     if (redTotal > blueTotal) {
       gameInfo.shootingFirst = "red";
       if (gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2) {
@@ -122,11 +135,13 @@
         gameInfo.shootingFirst === "red" &&
         (gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2)
       ) {
+
         return 3;
       } else if (
         gameInfo.shootingFirst === "red" &&
         (gameInfo.currentPlayer === 1 || gameInfo.currentPlayer === 3)
       ) {
+
         return 2;
       } else if (
         gameInfo.shootingFirst === "blue" &&
@@ -140,7 +155,43 @@
         return 0;
       }
     } else {
+
       return null;
+    }
+  };
+
+  const checkForBustedShot = (
+    currentRound: any,
+    gameInfo: GameInfo,
+  ) => {
+    const redTotal = currentRound.tracking
+      .filter((shot: any) => shot.shooter.color === "red")
+      .reduce((acc: number, shot: any) => acc + shot.score, 0);
+
+    const blueTotal = currentRound.tracking
+      .filter((shot: any) => shot.shooter.color === "blue")
+      .reduce((acc: number, shot: any) => acc + shot.score, 0);
+
+    const lastShot = currentRound.tracking[
+      currentRound.tracking.length - 1
+    ];
+
+    if (lastShot.score === 0) {
+      return false;
+    }
+
+    if (redTotal > blueTotal) {
+      const check = redTotal - blueTotal + gameInfo.scores.red;
+
+      if (check > 21) {
+        return "red";
+      }
+    } else {
+      const check = blueTotal - redTotal + gameInfo.scores.blue;
+
+      if (check > 21) {
+        return "blue";
+      }
     }
   };
 </script>

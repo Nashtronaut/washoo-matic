@@ -18,11 +18,19 @@ export type GameInfo = {
     currentPlayer: number | null;
     shootingFirst: string | null;
     round: string;
+    historyMountSize: number | null;
 };
 
 export type Player = {
     id: number;
     name: string | null;
     color: string;
-    score: number;
+    stats: {
+        accuracy: number;
+        shots: number;
+        hits: number;
+        misses: number;
+        points: number;
+        busted: number;
+    }
 };

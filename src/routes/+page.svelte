@@ -6,32 +6,44 @@
   import TeamInfo from "./team-info.svelte";
   import NameInput from "./name-input.svelte";
   import type { GameInfo } from "./types.ds";
+  import Stats from "./stats.svelte";
   
+  let showStats = false;
+
+  let freshStats = {
+    accuracy: 0,
+    shots: 0,
+    hits: 0,
+    misses: 0,
+    points: 0,
+    busted: 0,
+  };
+
   let gameInfo: GameInfo = {
     players: [
       {
         id: 0,
         name: null,
-        score: 0,
         color: "blue",
+        stats: {...freshStats},
       },
       {
         id: 1,
         name: null,
-        score: 0,
         color: "blue",
+        stats: {...freshStats},
       },
       {
         id: 2,
         name: null,
-        score: 0,
         color: "red",
+        stats: {...freshStats}
       },
       {
         id: 3,
         name: null,
-        score: 0,
         color: "red",
+        stats: {...freshStats}
       },
     ],
     rounds: [
@@ -54,7 +66,49 @@
     currentPlayer: null,
     winner: null,
     shootingFirst: null,
+    historyMountSize: false
   };
+
+  const trackStats = () => {
+    resetStats();
+    gameInfo.rounds.forEach((round) => {
+      round.tracking.forEach((shot) => {
+        const player = gameInfo.players.find(
+          (player) => player.id === shot.shooter.id
+        );
+
+        if (!player) return;
+
+        player.stats.shots++;
+        if (shot.score !== 0) {
+          player.stats.hits++;
+        } else {
+          player.stats.misses++;
+        };
+
+        player.stats.accuracy = player.stats.hits / player.stats.shots;
+        player.stats.points += shot.score;
+        if (shot.busted) {
+          player.stats.busted++;
+        }
+      });
+    });
+  };
+
+  const resetStats = () => {
+    gameInfo.players.forEach((player) => {
+      player.stats = {
+        accuracy: 0,
+        shots: 0,
+        hits: 0,
+        misses: 0,
+        points: 0,
+        busted: 0,
+      };
+    });
+  };
+
+ $: gameInfo.rounds, trackStats(); 
 </script>
 
 <div class="flex flex-col h-screen bg-[#121212] py-4 px-4">
@@ -73,8 +127,12 @@
         <div
           class="flex justify-between items-center rounded-lg gap-4 text-[#E0E0E0] w-full h-[80%]"
         >
-          <History bind:gameInfo />
-          <ScoreButtons bind:gameInfo />
+          {#if showStats || gameInfo.winner}
+            <Stats {gameInfo} bind:showStats />
+          {:else}
+            <History bind:gameInfo bind:showStats />
+            <ScoreButtons bind:gameInfo />
+          {/if}
         </div>
       </div>
     </div>
