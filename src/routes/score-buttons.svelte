@@ -1,12 +1,14 @@
 <script lang="ts">
-  export let gameInfo: any;
+  import type { GameInfo } from "./types.ds";
+
+  export let gameInfo: GameInfo;
 
   const addScore = (score: number) => {
     const currentHistory = gameInfo.rounds[gameInfo.rounds.length - 1].tracking;
     gameInfo.rounds[gameInfo.rounds.length - 1].tracking = [
       ...currentHistory,
       {
-        shooter: gameInfo.players[gameInfo.currentPlayer],
+        shooter: gameInfo.players[Number(gameInfo.currentPlayer)],
         score: score,
       },
     ];
@@ -79,13 +81,19 @@
     const newRound = {
       name: `Round ${gameInfo.rounds.length + 1}`,
       tracking: [],
+      redTotal: 0,
+      blueTotal: 0,
     };
-    gameInfo.currentPlayer = determineNextPlayerAfterRound(currentRound);
+    gameInfo.currentPlayer = Number(determineNextPlayerAfterRound(currentRound));
     gameInfo.rounds = [...gameInfo.rounds, newRound];
     gameInfo.round = Number(gameInfo.round.slice(0, -1)) + 1 + "A";
   };
 
-  const determineNextPlayerAfterRound = (currentRound) => {
+  const determineNextPlayerAfterRound = (currentRound: {
+    tracking: { shooter: { color: string }; score: number }[];
+  }) => {
+    if (!gameInfo.currentPlayer) return null;
+
     const redTotal = currentRound.tracking
       .filter((shot: any) => shot.shooter.color === "red")
       .reduce((acc: number, shot: any) => acc + shot.score, 0);
@@ -94,6 +102,7 @@
       .filter((shot: any) => shot.shooter.color === "blue")
       .reduce((acc: number, shot: any) => acc + shot.score, 0);
 
+      
     if (redTotal > blueTotal) {
       gameInfo.shootingFirst = "red";
       if (gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2) {
@@ -130,6 +139,8 @@
       ) {
         return 0;
       }
+    } else {
+      return null;
     }
   };
 </script>

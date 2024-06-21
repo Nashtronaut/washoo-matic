@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { resetGame } from "./reset-game";
+  import type { GameInfo } from "./types.ds";
 
-  export let gameInfo;
+  export let gameInfo: GameInfo;
   let mounted = false;
   let manuallyBustConfirmation = false;
   let resetConfirmation = false;
@@ -27,8 +28,11 @@
   };
 
   const manuallyBust = () => {
+    if (gameInfo.currentPlayer === null) return;
     const color = gameInfo.players[gameInfo.currentPlayer].color;
-    gameInfo.busts[gameInfo.players[gameInfo.currentPlayer].color]++;
+
+    // Not sure why the below throws error, works fine.
+    gameInfo.busts[gameInfo.players[gameInfo.currentPlayer].color] += 1;
 
     if (color === "red") {
       gameInfo.scores.red = 0;
@@ -77,7 +81,7 @@
     class="flex flex-col text-xs text-[#B0BEC5] overflow-scroll pr-2 h-[85%] mb-4"
   >
     <div class="flex flex-col gap-4">
-      {#each gameInfo.rounds as { name, tracking, finalTotal }}
+      {#each gameInfo.rounds as { name, tracking }}
         <div class="flex flex-col gap-1">
           <p class="text-left text-[0.6rem]">{name}</p>
           {#each tracking as shot, index}
@@ -102,9 +106,6 @@
               <p>{shot.score === 0 ? "miss" : "+" + shot.score}</p>
             </div>
           {/each}
-          {#if finalTotal}
-            <p class="text-left mt-4">hello</p>
-          {/if}
         </div>
       {/each}
     </div>
@@ -142,10 +143,10 @@
     </div>
   {:else if manuallyBustConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">
-      You are manually busting {gameInfo.players[gameInfo.currentPlayer].color} team.
+      You are manually busting <span class="{gameInfo.players[Number(gameInfo.currentPlayer)].color === 'blue' ? 'text-blue-400' : 'text-red-400'}">{gameInfo.players[Number(gameInfo.currentPlayer)].color.toUpperCase()}</span> team.
       Continue?
     </p>
-    <div class="flex justify-between items-center w-full text-base">
+    <div class="flex justify-between items-center w-full text-xs">
       <button
         on:click|preventDefault={manuallyBust}
         class="flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
@@ -170,7 +171,7 @@
       You are manually resetting the game back to player input.
       Continue?
     </p>
-    <div class="flex justify-between items-center w-full text-base">
+    <div class="flex justify-between items-center w-full text-xs">
       <button
         on:click|preventDefault={handleResetGame}
         class="flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"

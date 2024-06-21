@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { GameInfo } from "./types.ds";
 
-  export let gameInfo: any;
+  export let gameInfo: GameInfo;
   let time: string = "Game Time: 0:00";
   let roundInfo: string = "Round 1A";
   let onMountComplete = false;
@@ -12,7 +13,7 @@
     onMountComplete = true;
   });
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     let minutes = Math.floor(seconds / 60);
     let remainderSeconds = seconds % 60;
     if (remainderSeconds < 10) {

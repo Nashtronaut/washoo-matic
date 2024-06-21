@@ -1,5 +1,7 @@
 <script lang="ts">
-  export let gameInfo: any;
+  import type { GameInfo } from "./types.ds";
+
+  export let gameInfo: GameInfo;
   let direction: string | null = null;
   let roundTotal: number = 0;
   let bust: boolean = false;

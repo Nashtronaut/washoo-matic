@@ -5,8 +5,9 @@
   import ScoreBoard from "./score-board.svelte";
   import TeamInfo from "./team-info.svelte";
   import NameInput from "./name-input.svelte";
+  import type { GameInfo } from "./types.ds";
   
-  let gameInfo = {
+  let gameInfo: GameInfo = {
     players: [
       {
         id: 0,
@@ -37,6 +38,8 @@
       {
         name: "Round 1",
         tracking: [],
+        redTotal: 0,
+        blueTotal: 0,
       },
     ],
     scores: {

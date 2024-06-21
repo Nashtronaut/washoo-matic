@@ -1,7 +1,8 @@
 <script lang="ts">
   import { resetGame } from "./reset-game";
+  import type { GameInfo } from "./types.ds";
 
-  export let gameInfo: any;
+  export let gameInfo: GameInfo;
 
   let currentDirection: string | null = null;
 
@@ -87,9 +88,7 @@
 {#if gameInfo}
   <div class="bg-[#1E1E1E] rounded-xl p-4">
     <div
-      class="{gameInfo.players.playerCount > 2
-        ? 'gap-8 pb-8'
-        : 'gap-4'} relative flex justify-between h-full flex-col text-sm text-[#B0BEC5] gap-8"
+      class="relative flex justify-between h-full flex-col text-sm text-[#B0BEC5] gap-8"
     >
       <div class="flex w-full justify-between text-base pb-4 font-bold">
         <p
@@ -201,7 +200,6 @@
             </div>
           </div>
 
-          <!-- HEREHEREHREHREHRHEHREHRRHEHRHERHEHR -->
           <svg
             class="{gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2
               ? 'rotate-180'
@@ -294,8 +292,6 @@
             </div>
           </div>
         </div>
-
-        <!-- MISSES -->
 
         <div
           class="{currentDirection === 'right'
