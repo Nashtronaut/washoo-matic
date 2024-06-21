@@ -56,6 +56,11 @@
       currentRound = gameInfo.rounds[gameInfo.rounds.length - 1];
       gameInfo.scores.red = gameInfo.scores.red - currentRound.redTotal;
       gameInfo.scores.blue = gameInfo.scores.blue - currentRound.blueTotal;
+      gameInfo.round = Number(gameInfo.round.slice(0, -1)) - 1 + 'B';
+    }
+
+    if (currentRound.tracking.length === 4) {
+      gameInfo.round = gameInfo.round.slice(0, -1) + "A";
     }
 
     gameInfo.rounds[gameInfo.rounds.length - 1].tracking =
