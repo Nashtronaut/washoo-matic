@@ -93,8 +93,8 @@
             <div class="flex justify-between w-full">
               <p
                 class="{player.color === 'red'
-                  ? 'text-red-400'
-                  : 'text-blue-400'} font-semibold"
+                  ? gameInfo.players[2].tailwindTextColor
+                  : gameInfo.players[1].tailwindTextColor} font-semibold"
               >
                 {player.name}
               </p>
@@ -118,8 +118,8 @@
               <div class="flex justify-between w-full">
                 <p
                   class="{player.color === 'red'
-                    ? 'text-red-400'
-                    : 'text-blue-400'} font-semibold"
+                  ? gameInfo.players[2].tailwindTextColor
+                  : gameInfo.players[1].tailwindTextColor} font-semibold"
                 >
                   {player.name}
                 </p>
@@ -143,8 +143,8 @@
               <div class="flex justify-between w-full">
                 <p
                   class="{player.color === 'red'
-                    ? 'text-red-400'
-                    : 'text-blue-400'} font-semibold"
+                  ? gameInfo.players[2].tailwindTextColor
+                  : gameInfo.players[1].tailwindTextColor} font-semibold"
                 >
                   {player.name}
                 </p>
@@ -168,8 +168,8 @@
               <div class="flex justify-between w-full">
                 <p
                   class="{player.color === 'red'
-                    ? 'text-red-400'
-                    : 'text-blue-400'} font-semibold"
+                  ? gameInfo.players[2].tailwindTextColor
+                  : gameInfo.players[1].tailwindTextColor} font-semibold"
                 >
                   {player.name}
                 </p>
@@ -190,8 +190,8 @@
               <div class="flex justify-between w-full">
                 <p
                   class="{player.color === 'red'
-                    ? 'text-red-400'
-                    : 'text-blue-400'} font-semibold"
+                  ? gameInfo.players[2].tailwindTextColor
+                  : gameInfo.players[1].tailwindTextColor} font-semibold"
                 >
                   {player.name}
                 </p>
@@ -204,6 +204,9 @@
             {/each}
           </div>
         </div>
+      </div>
+      <div class='bg-[#1E1E1E] rounded-xl px-4 py-1 text-xs'>
+        <p>Spectate Code: <span class="font-bold">{gameInfo.spectateCode.toUpperCase()}</span></p>
       </div>
     </div>
   </div>

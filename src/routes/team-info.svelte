@@ -15,6 +15,8 @@
     threeBlue: 0,
     fiveRed: 0,
     fiveBlue: 0,
+    unshotRed: 4,
+    unshotBlue: 4,
   };
 
   const placeDisc = () => {
@@ -34,6 +36,8 @@
         threeBlue: 0,
         fiveRed: 0,
         fiveBlue: 0,
+        unshotRed: 4,
+        unshotBlue: 4,
       };
 
       return;
@@ -63,10 +67,23 @@
     counters.fiveBlue = currentShots.filter(
       (shot: any) => shot.shooter.color === "blue" && shot.score === 5
     ).length;
+
+    counters.unshotBlue =
+      4 -
+      counters.missedBlue -
+      counters.oneBlue -
+      counters.threeBlue -
+      counters.fiveBlue;
+    counters.unshotRed =
+      4 -
+      counters.missedRed -
+      counters.oneRed -
+      counters.threeRed -
+      counters.fiveRed;
   };
 
   const handleResetGame = () => {
-      gameInfo = resetGame(gameInfo);
+    gameInfo = resetGame(gameInfo);
   };
 
   $: gameInfo.rounds, placeDisc();
@@ -81,6 +98,8 @@
         threeBlue: 0,
         fiveRed: 0,
         fiveBlue: 0,
+        unshotRed: 4,
+        unshotBlue: 4,
       };
     })();
 </script>
@@ -93,14 +112,14 @@
       <div class="flex w-full justify-between text-base pb-4 font-bold">
         <p
           class="min-h-6 {gameInfo.currentPlayer === 0
-            ? 'text-blue-400'
+            ? `${gameInfo.players[0].tailwindTextColor}`
             : 'text-[#B0BEC5]'} transition"
         >
           {gameInfo.players[0].name ?? " "}
         </p>
         <p
           class="{gameInfo.currentPlayer === 1
-            ? `${gameInfo.players.length > 2 ? 'text-blue-400' : 'text-red-400'}`
+            ? `${gameInfo.players[0].tailwindTextColor}`
             : 'text-[#B0BEC5]'} transition"
         >
           {gameInfo.players[1].name ?? " "}
@@ -108,12 +127,14 @@
       </div>
 
       {#if gameInfo.winner}
-        <div class='flex justify-center gap-4 py-3.5'>
+        <div class="flex justify-center gap-4 py-3.5">
           <button
             class="bg-green-400 text-white font-bold px-4 py-2 rounded-full"
             on:click|preventDefault={handleResetGame}
           >
-            <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">Start New Game</span>
+            <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+              >Start New Game</span
+            >
           </button>
         </div>
       {:else}
@@ -131,7 +152,7 @@
                       ? 'w-1/2'
                       : counters.fiveRed > counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -141,7 +162,7 @@
                       ? 'w-1/2'
                       : counters.fiveRed < counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -157,7 +178,7 @@
                       ? 'w-1/2'
                       : counters.threeRed > counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -167,7 +188,7 @@
                       ? 'w-1/2'
                       : counters.threeRed < counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -183,7 +204,7 @@
                       ? 'w-1/2'
                       : counters.oneRed > counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -193,7 +214,7 @@
                       ? 'w-1/2'
                       : counters.oneRed < counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -201,9 +222,7 @@
           </div>
 
           <svg
-            class="{gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2
-              ? 'rotate-180'
-              : ''} fill-white w-[1.5rem] h-[1.5rem] transition duration-500 ease-in-out"
+            class="{gameInfo.currentPlayer === null ? 'rotate-90' : gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2 ? 'rotate-180' : ''} fill-white w-[1.5rem] h-[1.5rem] transition duration-500 ease-in-out"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 32 32"
             ><path
@@ -225,7 +244,7 @@
                       ? 'w-1/2'
                       : counters.oneRed > counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -235,7 +254,7 @@
                       ? 'w-1/2'
                       : counters.oneRed < counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -250,7 +269,7 @@
                       ? 'w-1/2'
                       : counters.threeRed > counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -260,7 +279,7 @@
                       ? 'w-1/2'
                       : counters.threeRed < counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -275,7 +294,7 @@
                       ? 'w-1/2'
                       : counters.fiveRed > counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} bg-red-400 h-full"
+                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
                   />
                 {/if}
 
@@ -285,7 +304,7 @@
                       ? 'w-1/2'
                       : counters.fiveRed < counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} bg-blue-400 h-full"
+                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -299,7 +318,7 @@
             : 'left-1'} absolute bottom-8 gap-1 flex items-center"
         >
           {#each Array(counters.missedRed) as _, i}
-            <div class="rounded-full w-4 h-4 bg-red-400"></div>
+            <div class="rounded-full w-4 h-4 {gameInfo.players[2].tailwindBgColor}"></div>
           {/each}
         </div>
 
@@ -309,23 +328,45 @@
             : 'left-1'} absolute bottom-32 gap-1 flex items-center"
         >
           {#each Array(counters.missedBlue) as _, i}
-            <div class="rounded-full w-4 h-4 bg-blue-400"></div>
+            <div class="rounded-full w-4 h-4 {gameInfo.players[1].tailwindBgColor}"></div>
           {/each}
         </div>
+
+        {#if gameInfo.currentPlayer !== null}
+          <div
+            class="{currentDirection === 'right'
+              ? 'left-1'
+              : 'right-1'} absolute bottom-8 gap-1 flex items-center"
+          >
+            {#each Array(counters.unshotRed) as _, i}
+              <div class="rounded-full w-4 h-4 {gameInfo.players[2].tailwindBgColor}"></div>
+            {/each}
+          </div>
+
+          <div
+            class="{currentDirection === 'right'
+              ? 'left-1'
+              : 'right-1'} absolute bottom-32 gap-1 flex items-center"
+          >
+            {#each Array(counters.unshotBlue) as _, i}
+              <div class="rounded-full w-4 h-4 {gameInfo.players[1].tailwindBgColor}"></div>
+            {/each}
+          </div>
+        {/if}
       {/if}
 
       {#if gameInfo.players.length > 2}
         <div class="flex w-full justify-between text-base font-bold">
           <p
             class="{gameInfo.currentPlayer === 2
-              ? 'text-red-400'
+              ? `${gameInfo.players[2].tailwindTextColor}`
               : 'text-[#B0BEC5]'} transition"
           >
             {gameInfo.players[2].name ?? " "}
           </p>
           <p
             class="min-h-6 {gameInfo.currentPlayer === 3
-              ? 'text-red-400'
+              ? `${gameInfo.players[2].tailwindTextColor}`
               : 'text-[#B0BEC5]'} transition"
           >
             {gameInfo.players[3].name ?? " "}

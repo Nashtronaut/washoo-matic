@@ -1,10 +1,16 @@
 <script lang="ts">
+  import History from "./history.svelte";
   import { onMount } from "svelte";
   import { resetGame } from "./reset-game";
   import type { GameInfo } from "./types.ds";
+  import { supabase } from "$lib/supabase";
 
   export let gameInfo: GameInfo;
   export let showStats: boolean;
+  export let historyMountSize: number;
+  export let spectateMode: boolean;
+  export let inputSpectateCode: string;
+
   let mounted = false;
   let manuallyBustConfirmation = false;
   let resetConfirmation = false;
@@ -12,12 +18,11 @@
   onMount(() => {
     const container = document.getElementById("full-container");
 
-    if (!gameInfo.historyMountSize) {
-      const height = container!.offsetHeight;
-      gameInfo.historyMountSize = height;
+    if (!historyMountSize) {
+      historyMountSize = container!.offsetHeight;
     }
-    
-    container!.style.height = `${gameInfo.historyMountSize}px`;
+
+    container!.style.height = `${historyMountSize}px`;
     mounted = true;
   });
 
@@ -62,7 +67,7 @@
       currentRound = gameInfo.rounds[gameInfo.rounds.length - 1];
       gameInfo.scores.red = gameInfo.scores.red - currentRound.redTotal;
       gameInfo.scores.blue = gameInfo.scores.blue - currentRound.blueTotal;
-      gameInfo.round = Number(gameInfo.round.slice(0, -1)) - 1 + 'B';
+      gameInfo.round = Number(gameInfo.round.slice(0, -1)) - 1 + "B";
     }
 
     if (currentRound.tracking.length === 4) {
@@ -77,7 +82,14 @@
   };
 
   const handleResetGame = () => {
-      gameInfo = resetGame(gameInfo);
+    gameInfo = resetGame(gameInfo);
+  };
+
+  const stopSpectating = () => {
+    supabase.removeAllChannels();
+    gameInfo = resetGame(gameInfo);
+    spectateMode = false;
+    inputSpectateCode = "";
   };
 </script>
 
@@ -100,7 +112,7 @@
               {#if index !== 0}
                 <p
                   class={tracking[index - 1].shooter.name !== shot.shooter.name
-                    ? `${shot.shooter.color === "red" ? "text-red-400" : "text-blue-400"}`
+                    ? `${shot.shooter.color === "red" ? `${gameInfo.players[2].tailwindTextColor}` : `${gameInfo.players[1].tailwindTextColor}`}`
                     : "text-transparent"}
                 >
                   {shot.shooter.name}
@@ -108,8 +120,8 @@
               {:else}
                 <p
                   class={shot.shooter.color === "red"
-                    ? "text-red-400"
-                    : "text-blue-400"}
+                    ? `${gameInfo.players[2].tailwindTextColor}` 
+                    : `${gameInfo.players[1].tailwindTextColor}`}
                 >
                   {shot.shooter.name}
                 </p>
@@ -124,38 +136,53 @@
 
   {#if !manuallyBustConfirmation && !resetConfirmation}
     <div class="flex justify-evenly items-center w-full text-xs gap-4">
+      {#if !spectateMode}
+        <div class="flex flex-col gap-2 w-full">
+          <button
+            on:click|preventDefault={() => (manuallyBustConfirmation = true)}
+            class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
+          >
+            <span
+              class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+              >Bust</span
+            >
+          </button>
+          <button
+            on:click|preventDefault={() => (resetConfirmation = true)}
+            class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
+          >
+            <span
+              class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+              >Reset</span
+            >
+          </button>
+        </div>
+      {/if}
       <div class="flex flex-col gap-2 w-full">
-        <button
-          on:click|preventDefault={() => (manuallyBustConfirmation = true)}
-          class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-        >
-          <span
-            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-            >Bust</span
+        {#if !spectateMode}
+          <button
+            on:click|preventDefault={undoLastShot}
+            class="w-full flex justify-center items-center bg-gray-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
           >
-        </button>
-        <button
-          on:click|preventDefault={() => (resetConfirmation = true)}
-          class="w-full flex justify-center items-center bg-red-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-        >
-          <span
-            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-            >Reset</span
+            <span
+              class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+              >Undo</span
+            >
+          </button>
+        {/if}
+        {#if spectateMode}
+          <button
+            on:click|preventDefault={stopSpectating}
+            class="w-full flex justify-center items-center bg-yellow-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
           >
-        </button>
-      </div>
-      <div class="flex flex-col gap-2 w-full">
+            <span
+              class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
+              >Stop Spectating</span
+            >
+          </button>
+        {/if}
         <button
-          on:click|preventDefault={undoLastShot}
-          class="w-full flex justify-center items-center bg-gray-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
-        >
-          <span
-            class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-            >Undo</span
-          >
-        </button>
-        <button
-          on:click|preventDefault={() => showStats = true}
+          on:click|preventDefault={() => (showStats = true)}
           class="w-full flex justify-center items-center bg-green-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
         >
           <span
@@ -167,8 +194,14 @@
     </div>
   {:else if manuallyBustConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">
-      You are manually busting <span class="{gameInfo.players[Number(gameInfo.currentPlayer)].color === 'blue' ? 'text-blue-400' : 'text-red-400'}">{gameInfo.players[Number(gameInfo.currentPlayer)].color.toUpperCase()}</span> team.
-      Continue?
+      You are manually busting <span
+        class={gameInfo.players[Number(gameInfo.currentPlayer)].color === "blue"
+          ? "text-blue-400"
+          : "text-red-400"}
+        >{gameInfo.players[
+          Number(gameInfo.currentPlayer)
+        ].color.toUpperCase()}</span
+      > team. Continue?
     </p>
     <div class="flex justify-between items-center w-full text-xs">
       <button
@@ -192,8 +225,7 @@
     </div>
   {:else if resetConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">
-      You are manually resetting the game back to player input.
-      Continue?
+      You are manually resetting the game back to player input. Continue?
     </p>
     <div class="flex justify-between items-center w-full text-xs">
       <button

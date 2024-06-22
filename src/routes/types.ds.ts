@@ -18,13 +18,17 @@ export type GameInfo = {
     currentPlayer: number | null;
     shootingFirst: string | null;
     round: string;
-    historyMountSize: number | null;
+    spectateCode: string | null;
 };
 
 export type Player = {
     id: number;
     name: string | null;
     color: string;
+    tailwindColor: string;
+    tailwindBgColor: string;
+    tailwindBorderColor: string;
+    tailwindTextColor: string;
     stats: {
         accuracy: number;
         shots: number;

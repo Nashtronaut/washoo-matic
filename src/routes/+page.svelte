@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { supabase } from './../lib/supabase';
   import TopBar from "./top-bar.svelte";
   import ScoreButtons from "./score-buttons.svelte";
   import History from "./history.svelte";
@@ -9,6 +10,10 @@
   import Stats from "./stats.svelte";
   
   let showStats = false;
+  let historyMountSize = 0;
+  let gameId = 0;
+  let spectateMode = false;
+  let inputSpectateCode = "";
 
   let freshStats = {
     accuracy: 0,
@@ -19,30 +24,49 @@
     busted: 0,
   };
 
+  // TO ANYONE READING THIS ON GITHUB
+  // I know the tailwind stuff is stupid and not optimal. This is a rushed project for the weekend lol. I'll fix it later.
   let gameInfo: GameInfo = {
     players: [
       {
         id: 0,
         name: null,
         color: "blue",
+        tailwindColor: 'blue',
+        tailwindBgColor: "bg-blue-400",
+        tailwindBorderColor: "border-blue-400",
+        tailwindTextColor: "text-blue-400",
         stats: {...freshStats},
       },
       {
         id: 1,
         name: null,
         color: "blue",
+        tailwindColor: 'blue',
+        tailwindBgColor: "bg-blue-400",
+        tailwindBorderColor: "border-blue-400",
+        tailwindTextColor: "text-blue-400",
         stats: {...freshStats},
       },
       {
         id: 2,
         name: null,
         color: "red",
+        tailwindColor: 'red',
+        tailwindBgColor: "bg-red-400",
+        tailwindBorderColor: "border-red-400",
+        tailwindTextColor: "text-red-400",
+
         stats: {...freshStats}
       },
       {
         id: 3,
         name: null,
         color: "red",
+        tailwindColor: 'red',
+        tailwindBgColor: "bg-red-400",
+        tailwindBorderColor: "border-red-400",
+        tailwindTextColor: "text-red-400",
         stats: {...freshStats}
       },
     ],
@@ -66,7 +90,7 @@
     currentPlayer: null,
     winner: null,
     shootingFirst: null,
-    historyMountSize: false
+    spectateCode: null,
   };
 
   const trackStats = () => {
@@ -108,7 +132,21 @@
     });
   };
 
- $: gameInfo.rounds, trackStats(); 
+  const updateRemote = async () => {
+    if (gameInfo.currentPlayer !== null && gameInfo.shootingFirst && gameInfo.players.filter((player) => player.name === null).length === 0 && gameId !== 0) {
+      const { error } = await supabase.from('game-info').update({
+        ...gameInfo
+      }).eq('id', gameId);
+
+      if (error) {
+        console.error(error);
+      }
+    }
+  };
+
+ $: gameInfo.rounds, trackStats();
+ $: gameInfo, updateRemote();
+
 </script>
 
 <div class="flex flex-col h-screen bg-[#121212] py-4 px-4">
@@ -121,7 +159,7 @@
         class="h-full flex flex-col gap-4 mx-auto items-center bg-[#1E1E1E] rounded-xl p-4"
       >
         <div class="bg-[#121212] w-full rounded-xl px-4">
-          <TopBar bind:gameInfo />
+          <TopBar bind:gameInfo {spectateMode} />
           <ScoreBoard bind:gameInfo />
         </div>
         <div
@@ -130,13 +168,13 @@
           {#if showStats || gameInfo.winner}
             <Stats {gameInfo} bind:showStats />
           {:else}
-            <History bind:gameInfo bind:showStats />
-            <ScoreButtons bind:gameInfo />
+            <History bind:gameInfo bind:showStats bind:historyMountSize bind:inputSpectateCode {spectateMode} />
+            <ScoreButtons bind:gameInfo {spectateMode} />
           {/if}
         </div>
       </div>
     </div>
   {:else}
-    <NameInput bind:gameInfo />
+    <NameInput bind:gameInfo bind:gameId bind:spectateMode bind:inputSpectateCode />
   {/if}
 </div>

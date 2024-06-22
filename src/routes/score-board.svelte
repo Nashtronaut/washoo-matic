@@ -6,6 +6,7 @@
   let roundTotal: number = 0;
   let bust: boolean = false;
   let win: string | null = null;
+  let winText: string | null = null;
 
   const calculateRoundDisplay = () => {
     bust = false;
@@ -39,7 +40,9 @@
       }
 
       if (roundTotal + gameInfo.scores.blue === 21) {
-        win = "Blue";
+        const word = gameInfo.players[1].tailwindColor;
+        win = word.slice(0,1).toUpperCase() + word.slice(1);
+        winText = gameInfo.players[1].tailwindTextColor;
       }
     }
 
@@ -49,7 +52,9 @@
       }
 
       if (roundTotal + gameInfo.scores.red === 21) {
-        win = "Red";
+        const word = gameInfo.players[2].tailwindColor;
+        win = word.slice(0,1).toUpperCase() + word.slice(1);
+        winText = gameInfo.players[2].tailwindTextColor;
       }
     }
   };
@@ -63,7 +68,7 @@
   {#if !gameInfo.winner}
     <p class="absolute text-[0.6rem] top-0">Round Total</p>
     <div class="flex flex-col justify-center text-center py-2">
-      <div class="flex justify-center bg-red-400 rounded-full px-4 py-1">
+      <div class="flex justify-center {gameInfo.players[2].tailwindBgColor} rounded-full px-4 py-1">
         <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >{gameInfo.scores.red}</span
         >
@@ -87,7 +92,7 @@
         {#if bust}
           <p class="text-red-400">Bust</p>
         {:else if win}
-          <p class="text-xs text-center text-green-400">{win} to win!</p>
+          <p class="text-xs text-center {winText}">{win} to win!</p>
         {:else}
           <p>+{roundTotal === 0 ? "-" : roundTotal}</p>
         {/if}
@@ -108,7 +113,7 @@
     </div>
 
     <div class="flex flex-col">
-      <div class="flex justify-center bg-blue-400 rounded-full px-4 py-1">
+      <div class="flex justify-center {gameInfo.players[1].tailwindBgColor} rounded-full px-4 py-1">
         <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >{gameInfo.scores.blue}</span
         >
@@ -118,10 +123,10 @@
   {:else}
     <p
       class="{gameInfo.winner === 'Red'
-        ? 'text-red-400'
-        : 'text-blue-400'} font-bold p-[1.6rem]"
+        ? gameInfo.players[2].tailwindTextColor
+        : gameInfo.players[1].tailwindTextColor} font-bold p-[1.6rem]"
     >
-      {gameInfo.winner} Team Wins!
+      {gameInfo.players[gameInfo.winner === 'Red' ? 2 : 1].tailwindColor.slice(0,1).toUpperCase() + gameInfo.players[gameInfo.winner === 'Red' ? 2 : 1].tailwindColor.slice(1)} Team Wins!
     </p>
   {/if}
 </div>

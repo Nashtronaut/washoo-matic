@@ -3,6 +3,7 @@
   import type { GameInfo } from "./types.ds";
 
   export let gameInfo: GameInfo;
+  export let spectateMode: boolean;
   let time: string = "Game Time: 0:00";
   let roundInfo: string = "Round 1A";
   let onMountComplete = false;
@@ -35,5 +36,9 @@
 
 <div class="flex justify-between items-center text-[#B0BEC5] pt-4 w-full text-xs">
     <p>Round {gameInfo.round}</p>
-    <p>{time}</p>
+    {#if !spectateMode}
+      <p>{time}</p>
+    {:else}
+      <p>Spectator mode</p>
+    {/if}
 </div>
