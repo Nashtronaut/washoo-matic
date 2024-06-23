@@ -284,7 +284,7 @@ import { resetGame } from "./reset-game";
 
                 {#if counters.threeBlue > 0}
                   <div
-                    style="background: {gameInfo.players[2].colorInformation.hex}"
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.threeRed === counters.threeBlue
                       ? 'w-1/2'
                       : counters.threeRed < counters.threeBlue
