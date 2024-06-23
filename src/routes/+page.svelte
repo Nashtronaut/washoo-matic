@@ -36,10 +36,6 @@
           name: "Blue",
           hex: "#3AAEEA",
         },
-        tailwindColor: 'blue',
-        tailwindBgColor: "bg-blue-400",
-        tailwindBorderColor: "border-blue-400",
-        tailwindTextColor: "text-blue-400",
         stats: {...freshStats},
       },
       {
@@ -50,10 +46,6 @@
           name: "Blue",
           hex: "#3AAEEA",
         },
-        tailwindColor: 'blue',
-        tailwindBgColor: "bg-blue-400",
-        tailwindBorderColor: "border-blue-400",
-        tailwindTextColor: "text-blue-400",
         stats: {...freshStats},
       },
       {
@@ -64,11 +56,6 @@
           name: "Red",
           hex: "#EF4444",
         },
-        tailwindColor: 'red',
-        tailwindBgColor: "bg-red-400",
-        tailwindBorderColor: "border-red-400",
-        tailwindTextColor: "text-red-400",
-
         stats: {...freshStats}
       },
       {
@@ -79,10 +66,6 @@
           name: "Red",
           hex: "#EF4444",
         },
-        tailwindColor: 'red',
-        tailwindBgColor: "bg-red-400",
-        tailwindBorderColor: "border-red-400",
-        tailwindTextColor: "text-red-400",
         stats: {...freshStats}
       },
     ],

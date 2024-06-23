@@ -29,7 +29,6 @@
 
   const spectateGame = async () => {
     errorMessage = "";
-    spectateMode = true;
     const { data, error } = await supabase
       .from("game-info")
       .select("*")
@@ -38,6 +37,7 @@
 
     if (data) {
       gameInfo = data;
+      spectateMode = true;
     } else {
       errorMessage = "Game not found.";
     }
