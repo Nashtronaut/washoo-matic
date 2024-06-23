@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { resetGame } from "./reset-game";
+  import { colors } from "./colors";
+import { resetGame } from "./reset-game";
   import type { GameInfo } from "./types.ds";
 
   export let gameInfo: GameInfo;
@@ -111,16 +112,14 @@
     >
       <div class="flex w-full justify-between text-base pb-4 font-bold">
         <p
-          class="min-h-6 {gameInfo.currentPlayer === 0
-            ? `${gameInfo.players[0].tailwindTextColor}`
-            : 'text-[#B0BEC5]'} transition"
+          style="color: {gameInfo.currentPlayer === 0 && !gameInfo.winner || gameInfo.winner === 'Blue' ? gameInfo.players[0].colorInformation.hex : '#78909C'}"
+          class="min-h-6 transition"
         >
           {gameInfo.players[0].name ?? " "}
         </p>
         <p
-          class="{gameInfo.currentPlayer === 1
-            ? `${gameInfo.players[0].tailwindTextColor}`
-            : 'text-[#B0BEC5]'} transition"
+          style="color: {gameInfo.currentPlayer === 1  && !gameInfo.winner || gameInfo.winner === 'Blue' ? gameInfo.players[1].colorInformation.hex : '#78909C'}"
+          class="transition"
         >
           {gameInfo.players[1].name ?? " "}
         </p>
@@ -148,21 +147,23 @@
               {#if currentDirection === "left"}
                 {#if counters.fiveRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.fiveRed === counters.fiveBlue
                       ? 'w-1/2'
                       : counters.fiveRed > counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.fiveBlue > 0}
                   <div
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.fiveRed === counters.fiveBlue
                       ? 'w-1/2'
                       : counters.fiveRed < counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -174,21 +175,23 @@
               {#if currentDirection === "left"}
                 {#if counters.threeRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.threeRed === counters.threeBlue
                       ? 'w-1/2'
                       : counters.threeRed > counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.threeBlue > 0}
                   <div
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.threeRed === counters.threeBlue
                       ? 'w-1/2'
                       : counters.threeRed < counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -200,21 +203,23 @@
               {#if currentDirection === "left"}
                 {#if counters.oneRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.oneRed === counters.oneBlue
                       ? 'w-1/2'
                       : counters.oneRed > counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.oneBlue > 0}
                   <div
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.oneRed === counters.oneBlue
                       ? 'w-1/2'
                       : counters.oneRed < counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -222,7 +227,8 @@
           </div>
 
           <svg
-            class="{gameInfo.currentPlayer === null ? 'rotate-90' : gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2 ? 'rotate-180' : ''} fill-white w-[1.5rem] h-[1.5rem] transition duration-500 ease-in-out"
+            style="fill: {gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1 ? gameInfo.players[0].colorInformation.hex : gameInfo.currentPlayer === 2 || gameInfo.currentPlayer === 3 ? gameInfo.players[2].colorInformation.hex : '#78909C'}"  
+            class="{gameInfo.currentPlayer === null ? 'rotate-90' : gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2 ? 'rotate-180' : ''} w-[1.5rem] h-[1.5rem] transition duration-500 ease-in-out"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 32 32"
             ><path
@@ -240,21 +246,23 @@
               {#if currentDirection === "right"}
                 {#if counters.oneRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.oneRed === counters.oneBlue
                       ? 'w-1/2'
                       : counters.oneRed > counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.oneBlue > 0}
                   <div
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.oneRed === counters.oneBlue
                       ? 'w-1/2'
                       : counters.oneRed < counters.oneBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -265,21 +273,23 @@
               {#if currentDirection === "right"}
                 {#if counters.threeRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.threeRed === counters.threeBlue
                       ? 'w-1/2'
                       : counters.threeRed > counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.threeBlue > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.threeRed === counters.threeBlue
                       ? 'w-1/2'
                       : counters.threeRed < counters.threeBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -290,21 +300,23 @@
               {#if currentDirection === "right"}
                 {#if counters.fiveRed > 0}
                   <div
+                    style="background: {gameInfo.players[2].colorInformation.hex}"
                     class="{counters.fiveRed === counters.fiveBlue
                       ? 'w-1/2'
                       : counters.fiveRed > counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[2].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   />
                 {/if}
 
                 {#if counters.fiveBlue > 0}
                   <div
+                    style="background: {gameInfo.players[1].colorInformation.hex}"
                     class="{counters.fiveRed === counters.fiveBlue
                       ? 'w-1/2'
                       : counters.fiveRed < counters.fiveBlue
                         ? 'w-full'
-                        : 'w-0'} {gameInfo.players[1].tailwindBgColor} h-full"
+                        : 'w-0'} h-full"
                   ></div>
                 {/if}
               {/if}
@@ -318,7 +330,7 @@
             : 'left-1'} absolute bottom-8 gap-1 flex items-center"
         >
           {#each Array(counters.missedRed) as _, i}
-            <div class="rounded-full w-4 h-4 {gameInfo.players[2].tailwindBgColor}"></div>
+            <div style="background: {gameInfo.players[2].colorInformation.hex}" class="rounded-full w-4 h-4"></div>
           {/each}
         </div>
 
@@ -328,7 +340,7 @@
             : 'left-1'} absolute bottom-32 gap-1 flex items-center"
         >
           {#each Array(counters.missedBlue) as _, i}
-            <div class="rounded-full w-4 h-4 {gameInfo.players[1].tailwindBgColor}"></div>
+            <div style="background: {gameInfo.players[1].colorInformation.hex}" class="rounded-full w-4 h-4"></div>
           {/each}
         </div>
 
@@ -339,7 +351,7 @@
               : 'right-1'} absolute bottom-8 gap-1 flex items-center"
           >
             {#each Array(counters.unshotRed) as _, i}
-              <div class="rounded-full w-4 h-4 {gameInfo.players[2].tailwindBgColor}"></div>
+              <div style="background: {gameInfo.players[2].colorInformation.hex}" class="rounded-full w-4 h-4"></div>
             {/each}
           </div>
 
@@ -349,7 +361,7 @@
               : 'right-1'} absolute bottom-32 gap-1 flex items-center"
           >
             {#each Array(counters.unshotBlue) as _, i}
-              <div class="rounded-full w-4 h-4 {gameInfo.players[1].tailwindBgColor}"></div>
+              <div style="background: {gameInfo.players[1].colorInformation.hex}" class="rounded-full w-4 h-4"></div>
             {/each}
           </div>
         {/if}
@@ -358,16 +370,14 @@
       {#if gameInfo.players.length > 2}
         <div class="flex w-full justify-between text-base font-bold">
           <p
-            class="{gameInfo.currentPlayer === 2
-              ? `${gameInfo.players[2].tailwindTextColor}`
-              : 'text-[#B0BEC5]'} transition"
+            style="color: {gameInfo.currentPlayer === 2  && !gameInfo.winner || gameInfo.winner === 'Red' ? gameInfo.players[2].colorInformation.hex : '#78909C'}"
+            class="transition"
           >
             {gameInfo.players[2].name ?? " "}
           </p>
           <p
-            class="min-h-6 {gameInfo.currentPlayer === 3
-              ? `${gameInfo.players[2].tailwindTextColor}`
-              : 'text-[#B0BEC5]'} transition"
+            style="color: {gameInfo.currentPlayer === 3  && !gameInfo.winner || gameInfo.winner === 'Red' ? gameInfo.players[3].colorInformation.hex : '#78909C'}"
+            class="min-h-6 transition"
           >
             {gameInfo.players[3].name ?? " "}
           </p>

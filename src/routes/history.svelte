@@ -111,17 +111,16 @@
             <div class="flex justify-between w-full">
               {#if index !== 0}
                 <p
+                  style='{tracking[index -1].shooter.name !== shot.shooter.name ? `${shot.shooter.color === 'red' ? `color: ${gameInfo.players[2].colorInformation.hex}` : `${gameInfo.players[1].colorInformation.hex}`}` : ""}'
                   class={tracking[index - 1].shooter.name !== shot.shooter.name
-                    ? `${shot.shooter.color === "red" ? `${gameInfo.players[2].tailwindTextColor}` : `${gameInfo.players[1].tailwindTextColor}`}`
+                    ? ''
                     : "text-transparent"}
                 >
                   {shot.shooter.name}
                 </p>
               {:else}
                 <p
-                  class={shot.shooter.color === "red"
-                    ? `${gameInfo.players[2].tailwindTextColor}` 
-                    : `${gameInfo.players[1].tailwindTextColor}`}
+                  style="color: {gameInfo.players[shot.shooter.color === 'red' ? 2 : 1].colorInformation.hex}"
                 >
                   {shot.shooter.name}
                 </p>
@@ -183,7 +182,7 @@
         {/if}
         <button
           on:click|preventDefault={() => (showStats = true)}
-          class="w-full flex justify-center items-center bg-green-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
+          class="w-full flex justify-center items-center bg-gray-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
         >
           <span
             class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
@@ -195,12 +194,10 @@
   {:else if manuallyBustConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">
       You are manually busting <span
-        class={gameInfo.players[Number(gameInfo.currentPlayer)].color === "blue"
-          ? "text-blue-400"
-          : "text-red-400"}
+        style="color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
         >{gameInfo.players[
           Number(gameInfo.currentPlayer)
-        ].color.toUpperCase()}</span
+        ].colorInformation.name.toUpperCase()}</span
       > team. Continue?
     </p>
     <div class="flex justify-between items-center w-full text-xs">

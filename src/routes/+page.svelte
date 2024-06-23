@@ -32,6 +32,10 @@
         id: 0,
         name: null,
         color: "blue",
+        colorInformation: {
+          name: "Blue",
+          hex: "#3AAEEA",
+        },
         tailwindColor: 'blue',
         tailwindBgColor: "bg-blue-400",
         tailwindBorderColor: "border-blue-400",
@@ -42,6 +46,10 @@
         id: 1,
         name: null,
         color: "blue",
+        colorInformation: {
+          name: "Blue",
+          hex: "#3AAEEA",
+        },
         tailwindColor: 'blue',
         tailwindBgColor: "bg-blue-400",
         tailwindBorderColor: "border-blue-400",
@@ -52,6 +60,10 @@
         id: 2,
         name: null,
         color: "red",
+        colorInformation: {
+          name: "Red",
+          hex: "#EF4444",
+        },
         tailwindColor: 'red',
         tailwindBgColor: "bg-red-400",
         tailwindBorderColor: "border-red-400",
@@ -63,6 +75,10 @@
         id: 3,
         name: null,
         color: "red",
+        colorInformation: {
+          name: "Red",
+          hex: "#EF4444",
+        },
         tailwindColor: 'red',
         tailwindBgColor: "bg-red-400",
         tailwindBorderColor: "border-red-400",

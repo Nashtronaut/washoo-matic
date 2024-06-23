@@ -25,10 +25,10 @@ export type Player = {
     id: number;
     name: string | null;
     color: string;
-    tailwindColor: string;
-    tailwindBgColor: string;
-    tailwindBorderColor: string;
-    tailwindTextColor: string;
+    colorInformation: {
+        hex: string;
+        name: string;
+    };
     stats: {
         accuracy: number;
         shots: number;

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { supabase } from "$lib/supabase";
+  import { colors } from "./colors";
   import type { GameInfo } from "./types.ds";
 
   export let gameInfo: GameInfo;
@@ -10,30 +11,12 @@
   let errorMessage = "";
   let keyswitch = {};
 
-  const colorOptions = [
-    "red",
-    // "orange",
-    // "amber",
-    "yellow",
-    // "lime",
-    "green",
-    // "emerald",
-    // "teal",
-    // "cyan",
-    // "sky",
-    "blue",
-    // "indigo",
-    // "violet",
-    // "purple",
-    // "fuchsia",
-    // "pink",
-    // "rose"
-  ];
-
   const initializeGame = async () => {
+    // Id prevents multiple games from being saved in one session
     const { data, error } = await supabase
       .from("game-info")
-      .insert({
+      .upsert({
+        id: gameId,
         ...gameInfo,
       })
       .select("id")
@@ -74,32 +57,35 @@
   };
 
   const swapColor = (team) => {
-    const currentColor = gameInfo.players[team === 1 ? 0 : 2].tailwindColor;
-    const currentIndex = colorOptions.indexOf(currentColor);
+    const currentColor = gameInfo.players[team === 1 ? 0 : 2].colorInformation;
+    const currentIndex = colors.indexOf(currentColor);
     const teamPlayers = team === 1 ? [0, 1] : [2, 3];
     const otherTeamColor =
       team === 1
-        ? gameInfo.players[2].tailwindColor
-        : gameInfo.players[0].tailwindColor;
+        ? gameInfo.players[2].colorInformation
+        : gameInfo.players[0].colorInformation;
 
-    let newIndex = (currentIndex + 1) % colorOptions.length;
-    let newColor = colorOptions[newIndex];
+    let newIndex = (currentIndex + 1) % colors.length;
+    let newColor = colors[newIndex];
 
     // Ensure the new color does not match the other team's color
-    while (newColor === otherTeamColor) {
-      newIndex = (newIndex + 1) % colorOptions.length;
-      newColor = colorOptions[newIndex];
+    while (newColor.name === otherTeamColor.name) {
+      newIndex = (newIndex + 1) % colors.length;
+      newColor = colors[newIndex];
     }
 
     teamPlayers.forEach((player) => {
-      gameInfo.players[player].tailwindColor = newColor;
-      gameInfo.players[player].tailwindBorderColor = `border-${newColor}-400`;
-      gameInfo.players[player].tailwindBgColor = `bg-${newColor}-400`;
-        gameInfo.players[player].tailwindTextColor = `text-${newColor}-400`;
+      gameInfo.players[player].colorInformation = newColor;
     });
 
     keyswitch = {};
   };
+
+  $: inputSpectateCode, (() => {
+    if (inputSpectateCode.length > 0) {
+      inputSpectateCode = inputSpectateCode.toUpperCase();
+    }
+  })();
 </script>
 
 {#key keyswitch}
@@ -117,14 +103,16 @@
           <input
             bind:value={player.name}
             id="player{index + 1}"
-            class="{player.tailwindBorderColor} border rounded-full px-2 bg-[#121212]"
+            style="border-color: {player.colorInformation.hex}"
+            class="border rounded-full px-2 bg-[#121212]"
             type="text"
           />
           {#if index === 1 || index === 2}
             <button
               on:click|preventDefault={() => swapColor(index)}
               tabindex='-1'
-              class="h-5 w-5 {player.tailwindBgColor}"
+              style="background-color: {player.colorInformation.hex}"
+              class="h-5 w-5"
             ></button>
           {:else}
             <div class="w-5" />
@@ -167,9 +155,10 @@
       </p>
       <div class="flex gap-4 items-center justify-center my-4">
         <input
+          maxlength="6"
           bind:value={inputSpectateCode}
           id="player1"
-          class="border-purple-500 border rounded-full px-2 bg-[#121212]"
+          class="border-purple-500 border rounded-full px-2 bg-[#121212] text-center"
           type="text"
         />
       </div>

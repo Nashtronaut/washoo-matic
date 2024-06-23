@@ -4,13 +4,12 @@
   export let gameInfo: GameInfo;
   let direction: string | null = null;
   let roundTotal: number = 0;
-  let bust: boolean = false;
-  let win: string | null = null;
-  let winText: string | null = null;
+  let bust: string = '';
+  let winInfo: any | null = null;
 
   const calculateRoundDisplay = () => {
-    bust = false;
-    win = null;
+    bust = '';
+    winInfo = null;
     let round = gameInfo.rounds[gameInfo.rounds.length - 1];
 
     const roundBlue = round.tracking
@@ -36,25 +35,22 @@
 
     if (direction === "blue") {
       if (roundTotal + gameInfo.scores.blue > 21) {
-        bust = true;
+        bust = 'blue';
       }
 
       if (roundTotal + gameInfo.scores.blue === 21) {
-        const word = gameInfo.players[1].tailwindColor;
-        win = word.slice(0,1).toUpperCase() + word.slice(1);
-        winText = gameInfo.players[1].tailwindTextColor;
+        winInfo = gameInfo.players[1].colorInformation;
       }
     }
 
     if (direction === "red") {
       if (roundTotal + gameInfo.scores.red > 21) {
-        bust = true;
+        bust = 'red';
       }
 
       if (roundTotal + gameInfo.scores.red === 21) {
-        const word = gameInfo.players[2].tailwindColor;
-        win = word.slice(0,1).toUpperCase() + word.slice(1);
-        winText = gameInfo.players[2].tailwindTextColor;
+        winInfo = gameInfo.players[2].colorInformation;
+
       }
     }
   };
@@ -68,7 +64,7 @@
   {#if !gameInfo.winner}
     <p class="absolute text-[0.6rem] top-0">Round Total</p>
     <div class="flex flex-col justify-center text-center py-2">
-      <div class="flex justify-center {gameInfo.players[2].tailwindBgColor} rounded-full px-4 py-1">
+      <div style="background: {gameInfo.players[2].colorInformation.hex}" class="flex justify-center rounded-full px-4 py-1">
         <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >{gameInfo.scores.red}</span
         >
@@ -89,10 +85,10 @@
             data-name="4-Arrow Left"
           /></svg
         >
-        {#if bust}
-          <p class="text-red-400">Bust</p>
-        {:else if win}
-          <p class="text-xs text-center {winText}">{win} to win!</p>
+        {#if bust.length > 0}
+          <p class="text-xs text-center text-red-400">{bust === 'red' ? gameInfo.players[2].colorInformation.name : gameInfo.players[1].colorInformation.name} team to bust</p>
+        {:else if winInfo}
+          <p style="color: {winInfo.hex}" class="text-xs text-center">{winInfo.name} team to win!</p>
         {:else}
           <p>+{roundTotal === 0 ? "-" : roundTotal}</p>
         {/if}
@@ -113,7 +109,7 @@
     </div>
 
     <div class="flex flex-col">
-      <div class="flex justify-center {gameInfo.players[1].tailwindBgColor} rounded-full px-4 py-1">
+      <div style="background: {gameInfo.players[1].colorInformation.hex}" class="flex justify-center rounded-full px-4 py-1">
         <span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >{gameInfo.scores.blue}</span
         >
@@ -122,11 +118,12 @@
     </div>
   {:else}
     <p
-      class="{gameInfo.winner === 'Red'
-        ? gameInfo.players[2].tailwindTextColor
-        : gameInfo.players[1].tailwindTextColor} font-bold p-[1.6rem]"
+      style="color: {gameInfo.winner === 'Red'
+        ? gameInfo.players[2].colorInformation.hex
+        : gameInfo.players[1].colorInformation.hex}"
+      class="font-bold p-[1.6rem]"
     >
-      {gameInfo.players[gameInfo.winner === 'Red' ? 2 : 1].tailwindColor.slice(0,1).toUpperCase() + gameInfo.players[gameInfo.winner === 'Red' ? 2 : 1].tailwindColor.slice(1)} Team Wins!
+      {gameInfo.players[gameInfo.winner === 'Red' ? 2 : 1].colorInformation.name} Team Wins!
     </p>
   {/if}
 </div>

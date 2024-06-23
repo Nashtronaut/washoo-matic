@@ -71,38 +71,22 @@
 </script>
 
 {#if mounted}
-  <div class="w-full py-2 text-white gap-12 bg-[#121212] rounded-xl px-4 pb-4">
-    <div class="flex justify-between w-full text-sm">
-      {#if gameInfo.winner}
-        <div class="w-1/3"></div>
-      {:else}
-        <button
-          on:click|preventDefault={() => (showStats = false)}
-          class="w-1/3 text-left">Back</button
-        >
-      {/if}
-      <p class="text-center">{gameInfo.winner ? "Post-" : ""}Game Stats</p>
-      <div class="w-1/3"></div>
-    </div>
-
-    <div class="flex flex-col w-full text-xs gap-4">
+  <div class="w-full py-2 text-white bg-[#121212] rounded-xl px-4 pb-4">
+    <div class="flex flex-col w-full text-xs gap-2">
       <div class="w-full bg-[#1E1E1E] p-2 rounded-xl mt-4">
         <p class="pb-2">Accuracy</p>
         <div class="flex flex-col gap-1">
           {#each accuracyArray as player, index}
             <div class="flex justify-between w-full">
               <p
-                class="{player.color === 'red'
-                  ? gameInfo.players[2].tailwindTextColor
-                  : gameInfo.players[1].tailwindTextColor} font-semibold"
+                style="color: {player.color === 'red'
+                  ? gameInfo.players[2].colorInformation.hex
+                  : gameInfo.players[1].colorInformation.hex}"
+                class="font-semibold"
               >
                 {player.name}
               </p>
-              <p
-                class={index === 0
-                  ? "text-green-400"
-                  : ''}
-              >
+              <p class={index === 0 ? "text-green-400" : ""}>
                 {player.accuracy} %
               </p>
             </div>
@@ -110,24 +94,23 @@
         </div>
       </div>
 
-      <div class="flex w-full justify-between gap-4 text-xs">
+      <div class="flex w-full justify-between gap-2 text-xs">
         <div class="w-1/2 bg-[#1E1E1E] p-2 rounded-xl">
           <p class="pb-2">Buckets Hit</p>
           <div class="flex flex-col gap-1">
             {#each hitsArray as player, index}
               <div class="flex justify-between w-full">
                 <p
-                  class="{player.color === 'red'
-                  ? gameInfo.players[2].tailwindTextColor
-                  : gameInfo.players[1].tailwindTextColor} font-semibold"
+                  style="color: {player.color === 'red'
+                    ? gameInfo.players[2].colorInformation.hex
+                    : gameInfo.players[1].colorInformation.hex}"
+                  class="font-semibold"
                 >
                   {player.name}
                 </p>
                 <p>
-                  <span
-                    class={index === 0
-                      ? "text-green-400"
-                      : ''}>{player.hits}</span
+                  <span class={index === 0 ? "text-green-400" : ""}
+                    >{player.hits}</span
                   >
                   / {player.taken}
                 </p>
@@ -142,15 +125,16 @@
             {#each missesArray as player, index}
               <div class="flex justify-between w-full">
                 <p
-                  class="{player.color === 'red'
-                  ? gameInfo.players[2].tailwindTextColor
-                  : gameInfo.players[1].tailwindTextColor} font-semibold"
+                  style="color: {player.color === 'red'
+                    ? gameInfo.players[2].colorInformation.hex
+                    : gameInfo.players[1].colorInformation.hex}"
+                  class="font-semibold"
                 >
                   {player.name}
                 </p>
                 <p>
-                  <span
-                    class={index === 0 ? 'text-red-400' : ''}>{player.misses}</span
+                  <span class={index === 0 ? "text-red-400" : ""}
+                    >{player.misses}</span
                   >
                   / {player.taken}
                 </p>
@@ -160,22 +144,21 @@
         </div>
       </div>
 
-      <div class="flex w-full justify-between gap-4 text-xs">
+      <div class="flex w-full justify-between gap-2 text-xs">
         <div class="w-1/2 bg-[#1E1E1E] p-2 rounded-xl">
           <p class="pb-2">Total Points Hit</p>
           <div class="flex flex-col gap-1">
             {#each pointsArray as player, index}
               <div class="flex justify-between w-full">
                 <p
-                  class="{player.color === 'red'
-                  ? gameInfo.players[2].tailwindTextColor
-                  : gameInfo.players[1].tailwindTextColor} font-semibold"
+                  style="color: {player.color === 'red'
+                    ? gameInfo.players[2].colorInformation.hex
+                    : gameInfo.players[1].colorInformation.hex}"
+                  class="font-semibold"
                 >
                   {player.name}
                 </p>
-                <p
-                  class={index === 0 ? 'text-green-400' : ''}
-                >
+                <p class={index === 0 ? "text-green-400" : ""}>
                   {player.points}
                 </p>
               </div>
@@ -189,15 +172,14 @@
             {#each bustedArray as player, index}
               <div class="flex justify-between w-full">
                 <p
-                  class="{player.color === 'red'
-                  ? gameInfo.players[2].tailwindTextColor
-                  : gameInfo.players[1].tailwindTextColor} font-semibold"
+                  style="color: {player.color === 'red'
+                    ? gameInfo.players[2].colorInformation.hex
+                    : gameInfo.players[1].colorInformation.hex}"
+                  class="font-semibold"
                 >
                   {player.name}
                 </p>
-                <p
-                  class={index === 0 ? 'text-red-400' : ''}
-                >
+                <p class={index === 0 ? "text-red-400" : ""}>
                   {player.busted}
                 </p>
               </div>
@@ -205,9 +187,24 @@
           </div>
         </div>
       </div>
-      <div class='bg-[#1E1E1E] rounded-xl px-4 py-1 text-xs'>
-        <p>Spectate Code: <span class="font-bold">{gameInfo.spectateCode.toUpperCase()}</span></p>
-      </div>
+      {#if !gameInfo?.winner}
+        <div class="bg-[#1E1E1E] rounded-xl px-4 py-1 text-xs">
+          <p>
+            Spectate Code: <span class="font-bold"
+              >{gameInfo.spectateCode?.toUpperCase() ?? ""}</span
+            >
+          </p>
+        </div>
+        <button
+          on:click|preventDefault={() => (showStats = false)}
+          class="flex justify-center items-center bg-gray-400 p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg"
+        >
+          <span
+            class="bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg w-full"
+            >Back to Game</span
+          >
+        </button>
+      {/if}
     </div>
   </div>
 {/if}

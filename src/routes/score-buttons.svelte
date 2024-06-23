@@ -215,7 +215,8 @@
 >
   <button
     on:click|preventDefault={() => addScore(5)}
-    class="flex justify-center items-center {gameInfo.players[Number(gameInfo.currentPlayer)].tailwindBgColor} font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BFA5] focus:ring-opacity-50 shadow-lg transition"
+    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
+    class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BFA5] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
       class="{highlight === 5 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
@@ -225,8 +226,9 @@
 
   <!-- Lighter Teal Button -->
   <button
+    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     on:click|preventDefault={() => addScore(3)}
-    class="flex justify-center items-center {gameInfo.players[Number(gameInfo.currentPlayer)].tailwindBgColor} font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#26C6DA] focus:ring-opacity-50 shadow-lg transition"
+    class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#26C6DA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
       class="{highlight === 3 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-5 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
@@ -236,8 +238,9 @@
 
   <!-- Lightest Teal Button -->
   <button
+    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     on:click|preventDefault={() => addScore(1)}
-    class="flex justify-center items-center {gameInfo.players[Number(gameInfo.currentPlayer)].tailwindBgColor} font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition"
+    class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
       class="{highlight === 1 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
@@ -246,8 +249,9 @@
   </button>
 
   <button
+    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     on:click|preventDefault={() => addScore(0)}
-    class="flex justify-center items-center {gameInfo.players[Number(gameInfo.currentPlayer)].tailwindBgColor} font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition"
+    class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
       class="{highlight === 0 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full py-3 px-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
