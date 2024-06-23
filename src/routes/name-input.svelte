@@ -16,7 +16,6 @@
     const { data, error } = await supabase
       .from("game-info")
       .upsert({
-        id: gameId,
         ...gameInfo,
       })
       .select("id")

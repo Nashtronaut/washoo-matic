@@ -152,7 +152,7 @@
           >
             <span
               class="w-full bg-[#1E1E1E] rounded-full py-1 px-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg"
-              >Reset</span
+              >Menu</span
             >
           </button>
         </div>
@@ -222,7 +222,7 @@
     </div>
   {:else if resetConfirmation}
     <p class="text-xs text-[#B0BEC5] text-left py-2">
-      You are manually resetting the game back to player input. Continue?
+      Going back to main menu will end the game. Continue?
     </p>
     <div class="flex justify-between items-center w-full text-xs">
       <button
