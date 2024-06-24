@@ -5,6 +5,9 @@
   export let spectateMode: boolean;
 
   let highlight: number;
+  let buttonPressTimeout: any | null;
+  let buttonPressThreshhold: number = 1000;
+  let showKnockIn: number | null = null;
 
   const addScore = (score: number) => {
     const currentHistory = gameInfo.rounds[gameInfo.rounds.length - 1].tracking;
@@ -19,7 +22,7 @@
 
     const busted = checkForBustedShot(
       gameInfo.rounds[gameInfo.rounds.length - 1],
-      gameInfo,
+      gameInfo
     );
 
     if (busted) {
@@ -138,13 +141,11 @@
         gameInfo.shootingFirst === "red" &&
         (gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 2)
       ) {
-
         return 3;
       } else if (
         gameInfo.shootingFirst === "red" &&
         (gameInfo.currentPlayer === 1 || gameInfo.currentPlayer === 3)
       ) {
-
         return 2;
       } else if (
         gameInfo.shootingFirst === "blue" &&
@@ -158,15 +159,11 @@
         return 0;
       }
     } else {
-
       return null;
     }
   };
 
-  const checkForBustedShot = (
-    currentRound: any,
-    gameInfo: GameInfo,
-  ) => {
+  const checkForBustedShot = (currentRound: any, gameInfo: GameInfo) => {
     const redTotal = currentRound.tracking
       .filter((shot: any) => shot.shooter.color === "red")
       .reduce((acc: number, shot: any) => acc + shot.score, 0);
@@ -175,9 +172,7 @@
       .filter((shot: any) => shot.shooter.color === "blue")
       .reduce((acc: number, shot: any) => acc + shot.score, 0);
 
-    const lastShot = currentRound.tracking[
-      currentRound.tracking.length - 1
-    ];
+    const lastShot = currentRound.tracking[currentRound.tracking.length - 1];
 
     if (lastShot.score === 0) {
       return false;
@@ -205,6 +200,60 @@
     highlight = lastShot.score;
   };
 
+  const handleButtonDown = (score: number) => {
+    const currentHistory = gameInfo.rounds[gameInfo.rounds.length - 1].tracking;
+    buttonPressTimeout = setTimeout(() => {
+      if (currentHistory.length < 4) return;
+      showKnockIn = score;
+      addKnockIn(score);
+      buttonPressTimeout = null;
+    }, buttonPressThreshhold);
+  };
+
+  const handleButtonUp = (score: number) => {
+    if (buttonPressTimeout) {
+      clearTimeout(buttonPressTimeout);
+      addScore(score);
+    }
+    showKnockIn = null;
+  };
+
+  const addKnockIn = (score: number) => {
+    const currentHistory = gameInfo.rounds[gameInfo.rounds.length - 1].tracking;
+    const passedShots = currentHistory.filter((shot: any) => shot.score === 0);
+    if (passedShots.length === 0) {
+      return;
+    } else {
+      let foundAndChanged = false;
+      gameInfo.rounds[gameInfo.rounds.length - 1].tracking = gameInfo.rounds[
+        gameInfo.rounds.length - 1
+      ].tracking.map((shot, index) => {
+        if (index === 4) foundAndChanged = true;
+        if (!foundAndChanged && shot.score === 0) {
+          foundAndChanged = true;
+          return {
+            shooter: shot.shooter,
+            score: score,
+            busted: false,
+          };
+        } else {
+          return shot;
+        }
+      });
+
+      const busted = checkForBustedShot(
+        gameInfo.rounds[gameInfo.rounds.length - 1],
+        gameInfo
+      );
+
+      if (busted) {
+        gameInfo.rounds[gameInfo.rounds.length - 1].tracking[
+          gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length - 1
+        ].busted = true;
+      }
+    }
+  };
+
   $: gameInfo.rounds, checkHighlight();
 </script>
 
@@ -214,47 +263,69 @@
     : ''} flex flex-col justify-evenly w-[45%] font-bold items-center bg-[#121212] rounded-xl h-full py-2 px-4"
 >
   <button
-    on:click|preventDefault={() => addScore(5)}
-    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
+    on:mousedown={() => handleButtonDown(5)}
+    on:mouseup={() => handleButtonUp(5)}
+    style="background-color: {showKnockIn === 5
+      ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1
+        ? gameInfo.players[2].colorInformation.hex
+        : gameInfo.players[0].colorInformation.hex
+      : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00BFA5] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
-      class="{highlight === 5 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
+      class="{highlight === 5
+        ? 'bg-white text-black'
+        : 'bg-[#1E1E1E]'} rounded-full p-6 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
       >+5</span
     >
   </button>
 
   <!-- Lighter Teal Button -->
   <button
-    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
-    on:click|preventDefault={() => addScore(3)}
+    style="background-color: {showKnockIn === 3
+      ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1
+        ? gameInfo.players[2].colorInformation.hex
+        : gameInfo.players[0].colorInformation.hex
+      : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
+    on:mousedown={() => handleButtonDown(3)}
+    on:mouseup={() => handleButtonUp(3)}
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#26C6DA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
-      class="{highlight === 3 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-5 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
+      class="{highlight === 3
+        ? 'bg-white text-black'
+        : 'bg-[#1E1E1E]'} rounded-full p-5 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
       >+3</span
     >
   </button>
 
   <!-- Lightest Teal Button -->
   <button
-    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
-    on:click|preventDefault={() => addScore(1)}
+  style="background-color: {showKnockIn === 1 ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1 ? gameInfo.players[2].colorInformation.hex : gameInfo.players[0].colorInformation.hex : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
+
+    on:mousedown={() => handleButtonDown(1)}
+    on:mouseup={() => handleButtonUp(1)}
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
-      class="{highlight === 1 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full p-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
+      class="{highlight === 1
+        ? 'bg-white text-black'
+        : 'bg-[#1E1E1E]'} rounded-full p-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
       >+1</span
     >
   </button>
 
   <button
-    style="background-color: {gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
-    on:click|preventDefault={() => addScore(0)}
+  style="background-color: {showKnockIn === 0 ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1 ? gameInfo.players[2].colorInformation.hex : gameInfo.players[0].colorInformation.hex : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
+
+    on:mousedown={() => handleButtonDown(0)}
+    on:mouseup={() => handleButtonUp(0)}
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
   >
     <span
-      class="{highlight === 0 ? "bg-white text-black" : "bg-[#1E1E1E]"} rounded-full py-3 px-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
+      class="{highlight === 0
+        ? 'bg-white text-black'
+        : 'bg-[#1E1E1E]'} rounded-full py-3 px-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] shadow-lg text-xl"
       >M</span
     >
   </button>
