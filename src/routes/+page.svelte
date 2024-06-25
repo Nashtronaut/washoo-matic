@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { supabase } from './../lib/supabase';
+  import { supabase } from "./../lib/supabase";
   import TopBar from "./top-bar.svelte";
   import ScoreButtons from "./score-buttons.svelte";
   import History from "./history.svelte";
@@ -8,12 +8,14 @@
   import NameInput from "./name-input.svelte";
   import type { GameInfo } from "./types.ds";
   import Stats from "./stats.svelte";
-  
+  import ProfileInformation from "./profile-information.svelte";
+
   let showStats = false;
   let historyMountSize = 0;
   let gameId = 0;
   let spectateMode = false;
   let inputSpectateCode = "";
+  let showProfilePage = false;
 
   let freshStats = {
     accuracy: 0,
@@ -36,7 +38,7 @@
           name: "Blue",
           hex: "#3AAEEA",
         },
-        stats: {...freshStats},
+        stats: { ...freshStats },
       },
       {
         id: 1,
@@ -46,7 +48,7 @@
           name: "Blue",
           hex: "#3AAEEA",
         },
-        stats: {...freshStats},
+        stats: { ...freshStats },
       },
       {
         id: 2,
@@ -56,7 +58,7 @@
           name: "Red",
           hex: "#EF4444",
         },
-        stats: {...freshStats}
+        stats: { ...freshStats },
       },
       {
         id: 3,
@@ -66,7 +68,7 @@
           name: "Red",
           hex: "#EF4444",
         },
-        stats: {...freshStats}
+        stats: { ...freshStats },
       },
     ],
     rounds: [
@@ -107,7 +109,7 @@
           player.stats.hits++;
         } else {
           player.stats.misses++;
-        };
+        }
 
         player.stats.accuracy = player.stats.hits / player.stats.shots;
         player.stats.points += shot.score;
@@ -132,10 +134,18 @@
   };
 
   const updateRemote = async () => {
-    if (gameInfo.currentPlayer !== null && gameInfo.shootingFirst && gameInfo.players.filter((player) => player.name === null).length === 0 && gameId !== 0) {
-      const { error } = await supabase.from('game-info').update({
-        ...gameInfo
-      }).eq('id', gameId);
+    if (
+      gameInfo.currentPlayer !== null &&
+      gameInfo.shootingFirst &&
+      gameInfo.players.filter((player) => player.name === null).length === 0 &&
+      gameId !== 0
+    ) {
+      const { error } = await supabase
+        .from("game-info")
+        .update({
+          ...gameInfo,
+        })
+        .eq("id", gameId);
 
       if (error) {
         console.error(error);
@@ -143,17 +153,16 @@
     }
   };
 
- $: gameInfo.rounds, trackStats();
- $: gameInfo, updateRemote();
-
+  $: gameInfo.rounds, trackStats();
+  $: gameInfo, updateRemote();
 </script>
 
 <div class="flex flex-col h-screen bg-[#121212] py-4 px-4">
-  <TeamInfo bind:gameInfo />
+  {#if !showProfilePage}
+    <TeamInfo bind:gameInfo />
+  {/if}
   {#if gameInfo.currentPlayer !== null && gameInfo.shootingFirst}
-    <div
-      class="flex-1 w-full rounded-xl mt-4 transition"
-    >
+    <div class="flex-1 w-full rounded-xl mt-4 transition">
       <div
         class="h-full flex flex-col gap-4 mx-auto items-center bg-[#1E1E1E] rounded-xl p-4"
       >
@@ -167,13 +176,27 @@
           {#if showStats || gameInfo.winner}
             <Stats {gameInfo} bind:showStats />
           {:else}
-            <History bind:gameInfo bind:showStats bind:historyMountSize bind:inputSpectateCode {spectateMode} />
+            <History
+              bind:gameInfo
+              bind:showStats
+              bind:historyMountSize
+              bind:inputSpectateCode
+              {spectateMode}
+            />
             <ScoreButtons bind:gameInfo {spectateMode} />
           {/if}
         </div>
       </div>
     </div>
+  {:else if showProfilePage}
+    <ProfileInformation bind:showProfilePage />
   {:else}
-    <NameInput bind:gameInfo bind:gameId bind:spectateMode bind:inputSpectateCode />
+    <NameInput
+      bind:gameInfo
+      bind:gameId
+      bind:spectateMode
+      bind:inputSpectateCode
+      bind:showProfilePage
+    />
   {/if}
 </div>

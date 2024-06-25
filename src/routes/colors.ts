@@ -1,20 +1,38 @@
 export const colors = [
-    { name: 'Blue', hex: '#3AAEEA' },     // Electric Blue
-    { name: 'Green', hex: '#34D399' },    // Neon Green
-    { name: 'Pink', hex: '#EC4899' },     // Hot Pink
-    { name: 'Orange', hex: '#FB923C' },   // Sunset Orange
-    { name: 'Yellow', hex: '#FACC15' },   // Lemon Yellow
-    { name: 'Aqua', hex: '#22D3EE' },     // Aqua
-    { name: 'Lime', hex: '#84CC16' },     // Lime Green
-    { name: 'Red', hex: '#EF4444' },      // Candy Apple Red
-    { name: 'Sky', hex: '#38BDF8' },      // Deep Sky Blue
-    { name: 'Magenta', hex: '#C084FC' },  // Magenta
-    { name: 'Light Green', hex: '#A3E635' }, // Chartreuse
-    { name: 'Teal', hex: '#06B6D4' },     // Turquoise
-    { name: 'Lavender', hex: '#A78BFA' }, // Lavender
-    { name: 'Crimson', hex: '#F43F5E' },  // Crimson
-    { name: 'Rose', hex: '#FB7185' },     // Coral
-    { name: 'Gold', hex: '#F59E0B' },     // Gold
-    { name: 'Plum', hex: '#D8B4FE' },     // Plum
-    { name: 'Salmon', hex: '#FB7185' },    // Salmon
-  ];
+  { name: 'Electric Blue', hex: '#3AAEEA' },
+  { name: 'Neon Green', hex: '#34D399' },
+  { name: 'Hot Pink', hex: '#EC4899' },
+  { name: 'Sunset Orange', hex: '#FB923C' },
+  { name: 'Lemon Yellow', hex: '#FACC15' },
+  { name: 'Aqua', hex: '#22D3EE' },
+  { name: 'Lime Green', hex: '#84CC16' },
+  { name: 'Candy Apple Red', hex: '#EF4444' },
+  { name: 'Deep Sky Blue', hex: '#38BDF8' },
+  { name: 'Magenta', hex: '#C084FC' },
+  { name: 'Chartreuse', hex: '#A3E635' },
+  { name: 'Turquoise', hex: '#06B6D4' },
+  { name: 'Lavender', hex: '#A78BFA' },
+  { name: 'Crimson', hex: '#F43F5E' },
+  { name: 'Gold', hex: '#F59E0B' },
+  { name: 'Plum', hex: '#D8B4FE' },
+  { name: 'Salmon', hex: '#FB7185' },
+  { name: 'Mint', hex: '#3EB489' },
+  { name: 'Coral', hex: '#FF7F50' },
+  { name: 'Peach', hex: '#FFDAB9' },
+  { name: 'Periwinkle', hex: '#CCCCFF' },
+  { name: 'Tangerine', hex: '#FFA500' },
+  { name: 'Fuchsia', hex: '#FF00FF' },
+  { name: 'Cyan', hex: '#00FFFF' },
+  { name: 'Amber', hex: '#FFBF00' },
+  // Additional unique colors
+  { name: 'Emerald', hex: '#50C878' },
+  { name: 'Amethyst', hex: '#9966CC' },
+  { name: 'Turmeric', hex: '#FFC107' },
+  { name: 'Sapphire', hex: '#0F52BA' },
+  { name: 'Ruby', hex: '#E0115F' },
+  { name: 'Mint Cream', hex: '#F5FFFA' },
+  { name: 'Blush', hex: '#DE5D83' },
+  { name: 'Azure', hex: '#007FFF' },
+  { name: 'Mango', hex: '#FFC324' },
+  { name: 'Ultramarine', hex: '#3F00FF' },
+];

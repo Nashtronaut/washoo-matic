@@ -1,12 +1,14 @@
 <script lang="ts">
   import { supabase } from "$lib/supabase";
   import { colors } from "./colors";
+  import ProfileInformation from "./profile-information.svelte";
   import type { GameInfo } from "./types.ds";
 
   export let gameInfo: GameInfo;
   export let gameId: number;
   export let spectateMode: boolean;
   export let inputSpectateCode: string;
+  export let showProfilePage: boolean;
 
   let errorMessage = "";
   let keyswitch = {};
@@ -31,7 +33,7 @@
     const { data, error } = await supabase
       .from("game-info")
       .select("*")
-      .eq("spectateCode", inputSpectateCode)
+      .eq("spectateCode", inputSpectateCde)
       .single();
 
     if (data) {
@@ -80,11 +82,12 @@
     keyswitch = {};
   };
 
-  $: inputSpectateCode, (() => {
-    if (inputSpectateCode.length > 0) {
-      inputSpectateCode = inputSpectateCode.toUpperCase();
-    }
-  })();
+  $: inputSpectateCode,
+    (() => {
+      if (inputSpectateCode.length > 0) {
+        inputSpectateCode = inputSpectateCode.toUpperCase();
+      }
+    })();
 </script>
 
 {#key keyswitch}
@@ -109,7 +112,7 @@
           {#if index === 1 || index === 2}
             <button
               on:click|preventDefault={() => swapColor(index)}
-              tabindex='-1'
+              tabindex="-1"
               style="background-color: {player.colorInformation.hex}"
               class="h-5 w-5"
             ></button>
@@ -143,6 +146,15 @@
         For four player, use first name in each box. For two player, use first
         and last name on the same team color.
       </p>
+    </div>
+
+    <div class="flex justify-center items-center bg-[#1E1E1E] p-4 rounded-xl">
+      <button
+        on:click|preventDefault={() => showProfilePage = true}
+        class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+        ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">Create Profile</span
+        ></button
+      >
     </div>
 
     <div
