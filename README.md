@@ -11,6 +11,19 @@ you will need to clone repo, open the `android` directory in `android studio` an
 
 I have included a screen recording below. 
 
+Here is a feature list, along with some inprogress and planned features.
+
+- [x] Team Color Selection
+- [x] Team stat tracking
+- [x] Bust detection
+- [x] "Knock in" capability (hold the score you knocked in to replace the previous shooters miss with the score)
+- [x] "Spectator Mode" (Watch a game in real time so that multiple players can view the same scoreboard from different devices)
+- [x] Win screen
+- [x] Profiles (WIP, profiles complete)
+- [ ] Persistant stat tracking
+- [ ] Family league
+- [ ] Leaderboards for leagues
+
 For reference, this is the game that it is for. I am aware there is probably some kind of already made app that would achieve this... 
 
 But I wanted my own :)
