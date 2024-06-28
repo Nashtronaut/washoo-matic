@@ -9,7 +9,14 @@ I only spent a few days on this and did it in rush for a weekend coming up, so d
 I may make this available on the playstore in time. This is mostly a family joke, but it was a fun little project. In order to user, 
 you will need to clone repo, open the `android` directory in `android studio` and build / compile and APK to side load to your device.
 
-I have included some screenshots below
+I have included a screen recording below. 
+
+For reference, this is the game that it is for. I am aware there is probably some kind of already made app that would achieve this... 
+
+But I wanted my own :)
+
+![3-hole-washers-500x3751-500x353](https://github.com/Nashtronaut/washoo-matic/assets/48274410/367f3a13-f93a-459a-9209-461cb0223cf7)
+
 
 Cheers!
 
