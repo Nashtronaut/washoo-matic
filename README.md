@@ -1,38 +1,18 @@
-# create-svelte
+# Washoo-matic
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Washoo-matic is a small little side project to keep scores and stats on a backyard game some family members play. 
 
-## Creating a project
+I built this app with Sveltekit and a supabase realtime back end to spectate games, and eventually store stats perpetually. 
 
-If you're seeing this, you've probably already done this step. Congrats!
+I only spent a few days on this and did it in rush for a weekend coming up, so don't judge it too harshly!
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+I may make this available on the playstore in time. This is mostly a family joke, but it was a fun little project. In order to user, 
+you will need to clone repo, open the `android` directory in `android studio` and build / compile and APK to side load to your device.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+I have included some screenshots below
 
-## Developing
+Cheers!
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-```bash
-npm run dev
+https://github.com/Nashtronaut/washoo-matic/assets/48274410/a4b37aca-591c-44ce-89e4-b5c24f10cda8
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
