@@ -6,32 +6,53 @@
 
   let highlight: number;
   let buttonPressTimeout: any | null;
-  let buttonPressThreshhold: number = 1000;
+  let buttonPressThreshhold: number = 500;
   let showKnockIn: number | null = null;
 
   const addScore = (score: number) => {
-    const currentHistory = gameInfo.rounds[gameInfo.rounds.length - 1].tracking;
-    gameInfo.rounds[gameInfo.rounds.length - 1].tracking = [
-      ...currentHistory,
-      {
-        shooter: gameInfo.players[Number(gameInfo.currentPlayer)],
-        score: score,
-        busted: false,
-      },
-    ];
-
-    const busted = checkForBustedShot(
-      gameInfo.rounds[gameInfo.rounds.length - 1],
-      gameInfo
-    );
-
-    if (busted) {
-      gameInfo.rounds[gameInfo.rounds.length - 1].tracking[
-        gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length - 1
-      ].busted = true;
+    // Check if rounds array exists and has at least one round
+    if (!gameInfo?.rounds?.length) {
+      console.error("No rounds available");
+      return;
     }
 
-    if (gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length === 4) {
+    // Create a new array with the updated tracking
+    gameInfo.rounds = gameInfo.rounds.map((round, index) => {
+      if (index !== gameInfo.rounds.length - 1) return round;
+
+      // Initialize tracking if it doesn't exist
+      const tracking = round.tracking || [];
+
+      // Create new tracking array with the new score
+      const newTracking = [
+        ...tracking,
+        {
+          shooter: gameInfo.players[Number(gameInfo.currentPlayer)],
+          score: score,
+          busted: false,
+        },
+      ];
+
+      // Check for busted shot
+      const busted = checkForBustedShot(
+        { ...round, tracking: newTracking },
+        gameInfo
+      );
+      if (busted) {
+        newTracking[newTracking.length - 1].busted = true;
+      }
+
+      // Return updated round
+      return {
+        ...round,
+        tracking: newTracking,
+      };
+    });
+
+    const currentRound = gameInfo.rounds[gameInfo.rounds.length - 1];
+
+    // Handle round transitions
+    if (currentRound.tracking.length === 4) {
       gameInfo.round = gameInfo.round.slice(0, -1) + "B";
       switch (gameInfo.currentPlayer) {
         case 0:
@@ -49,11 +70,10 @@
       }
     }
 
-    if (gameInfo.rounds[gameInfo.rounds.length - 1].tracking.length === 8) {
+    if (currentRound.tracking.length === 8) {
       incrementRound();
     }
   };
-
   const incrementRound = () => {
     const currentRound = gameInfo.rounds[gameInfo.rounds.length - 1];
 
@@ -301,8 +321,11 @@
 
   <!-- Lightest Teal Button -->
   <button
-  style="background-color: {showKnockIn === 1 ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1 ? gameInfo.players[2].colorInformation.hex : gameInfo.players[0].colorInformation.hex : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
-
+    style="background-color: {showKnockIn === 1
+      ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1
+        ? gameInfo.players[2].colorInformation.hex
+        : gameInfo.players[0].colorInformation.hex
+      : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     on:mousedown={() => handleButtonDown(1)}
     on:mouseup={() => handleButtonUp(1)}
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
@@ -316,8 +339,11 @@
   </button>
 
   <button
-  style="background-color: {showKnockIn === 0 ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1 ? gameInfo.players[2].colorInformation.hex : gameInfo.players[0].colorInformation.hex : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
-
+    style="background-color: {showKnockIn === 0
+      ? gameInfo.currentPlayer === 0 || gameInfo.currentPlayer === 1
+        ? gameInfo.players[2].colorInformation.hex
+        : gameInfo.players[0].colorInformation.hex
+      : gameInfo.players[Number(gameInfo.currentPlayer)].colorInformation.hex}"
     on:mousedown={() => handleButtonDown(0)}
     on:mouseup={() => handleButtonUp(0)}
     class="flex justify-center items-center font-bold p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#80DEEA] focus:ring-opacity-50 shadow-lg transition duration-700"
