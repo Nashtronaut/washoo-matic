@@ -15,7 +15,6 @@
     if (error) {
       errorMessage = error.message;
     } else {
-      console.log("User signed up:", data);
       handleStore(data);
     }
   };
@@ -29,7 +28,6 @@
     if (error) {
       errorMessage = error.message;
     } else {
-      console.log("User signed up:", data);
       handleStore(data);
     }
   };

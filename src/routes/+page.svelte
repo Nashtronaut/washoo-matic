@@ -11,6 +11,8 @@
   import { userStore } from "$lib/user-store";
   import LoginAndSignUp from "./login-and-sign-up.svelte";
   import ExtraMenu from "./extra-menu.svelte";
+  import ExtraPageWrapper from "./extra-page-wrapper.svelte";
+  import MyProfile from "./my-profile.svelte";
 
   let showStats = false;
   let historyMountSize = 0;
@@ -201,9 +203,11 @@
 
       <ExtraMenu bind:activeTab />
     {/if}
-  {:else if (activeTab = "family-manager")}
-    <button class='text-white' on:click={() => (activeTab = "")}>go back</button>
-  {:else if (activeTab = "profile")}
-    <button class='text-white' on:click={() => (activeTab = "")}>go back</button>
+  {:else if activeTab === "family-manager"}
+    <p>family manager</p>
+  {:else if activeTab === "profile"}
+    <ExtraPageWrapper title="My Profile" bind:activeTab>
+      <MyProfile />
+    </ExtraPageWrapper>
   {/if}
 </div>
