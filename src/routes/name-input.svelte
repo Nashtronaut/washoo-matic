@@ -2,6 +2,7 @@
   import { supabase } from "$lib/supabase";
   import { colors } from "./colors";
   import type { GameInfo } from "./types.ds";
+  import UserIcon from "./user-icon.svelte";
 
   export let gameInfo: GameInfo;
   export let gameId: number;
@@ -91,14 +92,14 @@
   <div class="flex flex-col gap-4 pb-4">
     <div
       id="full-container"
-      class="flex flex-col gap-4 w-full text-center h-full px-4 py-2 mt-4 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
+      class="flex flex-col gap-5 w-full text-center h-full px-4 py-2 mt-4 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
     >
       <p class="text-lg">Welcome to Washoo-matic!</p>
       <p class="text-sm">Please input player names.</p>
 
       {#each gameInfo.players as player, index}
-        <div class="flex gap-4 items-center justify-center">
-          <label for="player{index + 1}" class="text-sm">{index + 1}: </label>
+        <div class="flex items-center justify-center">
+          <label for="player{index + 1}" class="text-sm mr-2">{index + 1}: </label>
           <input
             bind:value={player.name}
             id="player{index + 1}"
@@ -106,6 +107,11 @@
             class="border rounded-full px-2 bg-[#121212]"
             type="text"
           />
+
+          <div class="w-6 h-6 mx-6">
+            <UserIcon />
+          </div>
+
           {#if index === 1 || index === 2}
             <button
               on:click|preventDefault={() => swapColor(index)}

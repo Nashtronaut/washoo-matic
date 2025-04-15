@@ -13,7 +13,7 @@
     {#if $userStore}
       <button
         on:click|preventDefault={() => (activeTab = "family-manager")}
-        class="bg-gray-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+        class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
         ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">MY STATS</span
         ></button
       >
@@ -21,7 +21,7 @@
 
     <button
       on:click|preventDefault={() => (activeTab = "family-manager")}
-      class="bg-gray-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+      class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
       ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">FAMILY STATS</span
       ></button
     >
@@ -29,7 +29,7 @@
     {#if $userStore}
       <button
         on:click|preventDefault={() => (activeTab = "profile")}
-        class="bg-gray-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+        class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
         ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">MY PROFILE</span
         ></button
       >
@@ -37,7 +37,7 @@
 
     <button
       on:click|preventDefault={() => (activeTab = "family-manager")}
-      class="bg-gray-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+      class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
       ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
         >FAMILY MANAGER</span
       ></button

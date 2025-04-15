@@ -13,6 +13,8 @@
   import ExtraMenu from "./extra-menu.svelte";
   import ExtraPageWrapper from "./extra-page-wrapper.svelte";
   import MyProfile from "./my-profile.svelte";
+  import { onMount } from "svelte";
+  import LoadSpinner from "./load-spinner.svelte";
 
   let showStats = false;
   let historyMountSize = 0;
@@ -20,6 +22,7 @@
   let spectateMode = false;
   let inputSpectateCode = "";
   let activeTab = "";
+  let isLoading = true;
 
   let freshStats = {
     accuracy: 0,
@@ -98,6 +101,20 @@
     spectateCode: null,
   };
 
+  onMount(async () => {
+    isLoading = true;
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) {
+      console.error("Error fetching user data:", error);
+      return;
+    };
+
+    userStore.set(data.user);
+
+    isLoading = false;
+  })
+
   const trackStats = () => {
     resetStats();
     gameInfo.rounds.forEach((round) => {
@@ -162,7 +179,10 @@
 </script>
 
 <div class="flex flex-col h-screen bg-[#121212] py-4 px-4">
-  {#if activeTab === ""}
+  {#if isLoading}
+      <LoadSpinner />
+  {/if}
+  {#if activeTab === "" && !isLoading}
     <TeamInfo bind:gameInfo />
     {#if gameInfo.currentPlayer !== null && gameInfo.shootingFirst}
       <div class="flex-1 w-full rounded-xl mt-4 transition">
