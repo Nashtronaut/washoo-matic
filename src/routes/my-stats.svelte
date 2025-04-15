@@ -3,21 +3,29 @@
   import { userStore } from "$lib/user-store";
   import { onMount } from "svelte";
   import LoadSpinner from "./load-spinner.svelte";
+  import { errorMessage } from "$lib/error-message-store";
 
   export let user: string = $userStore.id ?? "";
   let isLoading = false;
   let calculatedStats: any = [];
+  let name: string = "";
 
   onMount(async () => {
     isLoading = true;
     const { data, error } = await supabase
       .from("personal_stat")
-      .select("*")
+      .select("*, user(name)")
       .eq("user", user);
 
-    console.log("DATA: ", data);
+    if (error) {
+      console.error("Error fetching personal stats:", error);
+      errorMessage.set(error.message);
+      isLoading = false;
+      return;
+    }
 
     if (data.length > 0) {
+      name = data[0].user.name;
       calculatedStats = [
         {
           statOne: {
@@ -73,11 +81,13 @@
         {
           statOne: {
             title: "Avg Accuracy",
-            value: (
-              data?.reduce((acc, stat) => {
+            value: `${(
+              (data?.reduce((acc, stat) => {
                 return acc + (stat.stats.accuracy ?? 0);
-              }, 0) / data?.length
-            ).toFixed(2),
+              }, 0) /
+                data?.length) *
+              100
+            ).toFixed(2)} %`,
             bg: "border-blue-500",
           },
           statTwo: {
@@ -123,20 +133,20 @@
                 return acc + (stat.stats.misses ?? 0);
               }, 0) / data?.length
             ).toFixed(2),
-            bg: "border-red-500",
+            bg: "border-red-400",
           },
         },
         {
           statOne: {
             title: "Highest Accuracy Game",
-            value: Math.max(...data.map((stat) => stat.stats.accuracy ?? 0)),
-            bg: "border-green-500",
+            value: `${(Math.max(...data.map((stat) => stat.stats.accuracy ?? 0)) * 100).toFixed(2)} %`,
+            bg: "border-green-400",
           },
 
           statTwo: {
-            title: "Highest Accuracy Game",
-            value: Math.min(...data.map((stat) => stat.stats.accuracy ?? 0)),
-            bg: "border-green-500",
+            title: "Lowest Accuracy Game",
+            value: `${(Math.min(...data.map((stat) => stat.stats.accuracy ?? 0)) * 100).toFixed(2)} %`,
+            bg: "border-red-400",
           },
         },
         {
@@ -146,9 +156,9 @@
             bg: "border-green-500",
           },
           statTwo: {
-            title: "Highest Busts",
+            title: "Highest Busts Game",
             value: Math.max(...data.map((stat) => stat.stats.busted ?? 0)),
-            bg: "border-red-500",
+            bg: "border-red-400",
           },
         },
       ];
@@ -201,6 +211,7 @@
 <div>
   {#if !isLoading && calculatedStats.length !== 0}
     <div class="flex flex-col gap-2 w-full text-white">
+        <p class="my-4 text-xl font-bold">{name}'s Stats</p>
       {#each calculatedStats as { statOne, statTwo }}
         <div class="flex gap-2">
           <div

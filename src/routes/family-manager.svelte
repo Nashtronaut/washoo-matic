@@ -22,6 +22,10 @@
         return user.id === $userStore.id;
       })[0].family_members ?? [];
 
+    if (!currentFamily.includes($userStore.id)) {
+      currentFamily = [...currentFamily, $userStore.id];
+    }
+
     if (usersError) {
       console.error("Error fetching users:", usersError);
       errorMessage.set(usersError.message);
@@ -44,7 +48,7 @@
     const { error } = await supabase
       .from("user")
       .update({ family_members: currentFamily })
-      .eq("id", $userStore.id);
+      .in("id", currentFamily);
 
     if (error) {
       console.error("Error adding family member:", error);
@@ -58,7 +62,7 @@
     const { error } = await supabase
       .from("user")
       .update({ family_members: currentFamily })
-      .eq("id", $userStore.id);
+      .in("id", currentFamily);
 
     if (error) {
       console.error("Error removing family member:", error);
