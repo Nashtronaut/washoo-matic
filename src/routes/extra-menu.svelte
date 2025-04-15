@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { supabase } from "$lib/supabase";
   import { userStore } from "$lib/user-store";
 
   export let activeTab: string;
@@ -12,7 +13,7 @@
     <p class="text-lg">Menu</p>
     {#if $userStore}
       <button
-        on:click|preventDefault={() => (activeTab = "family-manager")}
+        on:click|preventDefault={() => (activeTab = "my-stats")}
         class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
         ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">MY STATS</span
         ></button
@@ -26,20 +27,32 @@
       ></button
     >
 
-    {#if $userStore}
+    <!-- {#if $userStore}
       <button
         on:click|preventDefault={() => (activeTab = "profile")}
         class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
         ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">MY PROFILE</span
         ></button
       >
-    {/if}
+    {/if} -->
 
     <button
       on:click|preventDefault={() => (activeTab = "family-manager")}
       class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
       ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
         >FAMILY MANAGER</span
+      ></button
+    >
+
+    <button
+      on:click|preventDefault={async () => {
+        await supabase.auth.signOut();
+        userStore.set(null);
+        activeTab = "";
+      }}
+      class="bg-blue-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+      ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+        >SIGN OUT</span
       ></button
     >
   </div>

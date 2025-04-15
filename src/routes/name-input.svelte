@@ -5,13 +5,13 @@
   import type { GameInfo } from "./types.ds";
   import UserIcon from "./user-icon.svelte";
   import LoadSpinner from "./load-spinner.svelte";
+  import { errorMessage } from "$lib/error-message-store";
 
   export let gameInfo: GameInfo;
   export let gameId: number;
   export let spectateMode: boolean;
   export let inputSpectateCode: string;
 
-  let errorMessage = "";
   let keyswitch = {};
   let isLoading = false;
   let usersList: any | null = [];
@@ -32,7 +32,7 @@
   };
 
   const spectateGame = async () => {
-    errorMessage = "";
+    errorMessage.set("");
     const { data, error } = await supabase
       .from("game-info")
       .select("*")
@@ -43,7 +43,7 @@
       gameInfo = data;
       spectateMode = true;
     } else {
-      errorMessage = "Game not found.";
+      errorMessage.set("Game not found.");
     }
 
     supabase
@@ -91,31 +91,34 @@
     const { data, error } = await supabase.from("user").select("*");
 
     if (error) {
+      errorMessage.set(error.message);
       console.error("Error fetching user data:", error);
       return;
     }
 
     usersList = data;
-
     isLoading = false;
   });
 
   const seekUser = (typedName, index) => {
-    console.log(usersList);
-    const user = usersList.filter((user) => {
-      console.log("user: ", user);
-      console.log("Typed name: ", typedName);
+    if (!typedName) return;
 
+    if (typedName.length === 0) {
+      gameInfo.players[index].anonPlayer = true;
+      return;
+    }
+
+    const user = usersList.filter((user) => {
       return user.name.toLowerCase() === typedName.toLowerCase();
     });
 
     if (user.length === 1) {
       gameInfo.players[index].name = user[0].name;
       gameInfo.players[index].dataId = user[0].id;
-      gameInfo.players[index].anonPlayer = false; 
+      gameInfo.players[index].anonPlayer = false;
     } else {
       gameInfo.players[index].anonPlayer = true;
-    };
+    }
   };
 
   $: inputSpectateCode,
@@ -224,7 +227,6 @@
           ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">SPECTATE</span
           ></button
         >
-        <p>{errorMessage}</p>
       </div>
     </div>
   {/key}

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { supabase } from "$lib/supabase";
   import { userStore } from "$lib/user-store";
+  import { errorMessage } from "$lib/error-message-store";
 
   let email = "";
   let password = "";
   let signUpEmail = "";
   let signUpPassword = "";
   let signUpFirstName = "";
-  let errorMessage: string | null = null;
 
   const onLogin = async () => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -16,22 +16,24 @@
     });
 
     if (error) {
-      errorMessage = error.message;
+      errorMessage.set(error.message);
     } else {
       handleStore(data.user);
     }
   };
 
   const onSignup = async () => {
-    const { data, error } = await supabase.auth.signUp({
-      email: signUpEmail,
-      password: signUpPassword,
-    });
-
-    if (error) {
-      errorMessage = error.message;
-    } else {
-      handleStore(data.user, true);
+    if (await checkUserName()) {
+      const { data, error } = await supabase.auth.signUp({
+        email: signUpEmail,
+        password: signUpPassword,
+      });
+  
+      if (error) {
+        errorMessage.set(error.message);
+      } else {
+        handleStore(data.user, true);
+      }
     }
   };
 
@@ -53,13 +55,28 @@
       };
 
       if (error) {
-        errorMessage = error.message;
+        errorMessage.set(error.message);
         return;
       }
     }
 
     userStore.set(tempUser);
   };
+
+  const checkUserName = async () => {
+    const { data, error } = await supabase
+      .from("user")
+      .select("*")
+      .eq("name", signUpFirstName)
+      .single();
+
+    if (data) {
+      errorMessage.set("This username is already taken.");
+      return false;
+    };
+
+    return true;
+  }
 </script>
 
 <div class="text-white">
@@ -100,11 +117,6 @@
         >
       </div>
       <button class="text-xs my-4">I forgot my password</button>
-
-      {#if errorMessage}
-        <p>Sorry! We've encountered an error. Please show this to Nash.</p>
-        <p>{errorMessage}</p>
-      {/if}
     </div>
 
     <div
@@ -142,11 +154,6 @@
           ></button
         >
       </div>
-
-      {#if errorMessage}
-        <p>Sorry! We've encountered an error. Please show this to Nash.</p>
-        <p>{errorMessage}</p>
-      {/if}
     </div>
   </div>
 </div>
