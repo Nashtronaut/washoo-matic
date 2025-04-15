@@ -4,6 +4,9 @@
 
   let email = "";
   let password = "";
+  let signUpEmail = "";
+  let signUpPassword = "";
+  let signUpFirstName = "";
   let errorMessage: string | null = null;
 
   const onLogin = async () => {
@@ -15,26 +18,47 @@
     if (error) {
       errorMessage = error.message;
     } else {
-      handleStore(data);
+      handleStore(data.user);
     }
   };
 
   const onSignup = async () => {
     const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
+      email: signUpEmail,
+      password: signUpPassword,
     });
 
     if (error) {
       errorMessage = error.message;
     } else {
-      handleStore(data);
+      handleStore(data.user, true);
     }
   };
 
-  const handleStore = (data) => {
-      const { user } = data;
-      userStore.set(user);
+  const handleStore = async (user, signingUp = false) => {
+    let tempUser = user;
+
+    if (signingUp) {
+      const { data, error } = await supabase
+        .from("user")
+        .upsert({
+          id: user.id,
+          name: signUpFirstName,
+        })
+        .select("*")
+        .single();
+
+      if (data) {
+        tempUser = data;
+      };
+
+      if (error) {
+        errorMessage = error.message;
+        return;
+      }
+    }
+
+    userStore.set(tempUser);
   };
 </script>
 
@@ -52,6 +76,7 @@
       id="full-container"
       class="flex flex-col gap-4 w-full text-center h-full px-4 py-2 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
     >
+      <p class="text-lg">Login</p>
       <p>Email</p>
       <input
         bind:value={email}
@@ -73,13 +98,6 @@
           ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">LOGIN</span
           ></button
         >
-
-        <button
-          on:click|preventDefault={onSignup}
-          class="bg-purple-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
-          ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">SIGN UP</span
-          ></button
-        >
       </div>
       <button class="text-xs my-4">I forgot my password</button>
 
@@ -88,9 +106,50 @@
         <p>{errorMessage}</p>
       {/if}
     </div>
+
+    <div
+      id="full-container"
+      class="flex flex-col gap-4 w-full text-center h-full px-4 py-2 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
+    >
+      <p class="text-lg">Sign Up</p>
+
+      <p>Email</p>
+      <input
+        bind:value={signUpEmail}
+        class="border-purple-500 border rounded-full px-2 bg-[#121212] text-center"
+        type="email"
+      />
+
+      <p>First Name</p>
+      <input
+        bind:value={signUpFirstName}
+        class="border-yellow-500 border rounded-full px-2 bg-[#121212] text-center"
+        type="text"
+      />
+
+      <p>Password</p>
+      <input
+        bind:value={signUpPassword}
+        class="border rounded-full px-2 bg-[#121212] text-center"
+        type="password"
+      />
+
+      <div class="flex gap-4 mb-2">
+        <button
+          on:click|preventDefault={onSignup}
+          class="bg-purple-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+          ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">Sign Up</span
+          ></button
+        >
+      </div>
+
+      {#if errorMessage}
+        <p>Sorry! We've encountered an error. Please show this to Nash.</p>
+        <p>{errorMessage}</p>
+      {/if}
+    </div>
   </div>
 </div>
-
 
 <!-- <button
   class="bg-purple-500 rounded-full w-1/2 mx-auto text-white font-bold px-4 py-1 mb-4 text-sm"

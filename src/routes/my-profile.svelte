@@ -30,6 +30,16 @@
   {#key userData}
     {#if userData}
       <pre>{JSON.stringify(userData, null, 2)}</pre>
+
+      <button on:click={async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          console.error("Error signing out:", error);
+        } else {
+          userStore.set(null);
+        };
+      }}>Sign Out</button>
     {/if}
   {/key}
 </div>

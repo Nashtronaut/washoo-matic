@@ -23,6 +23,8 @@ export type GameInfo = {
 
 export type Player = {
     id: number;
+    dataId: null;
+    anonPlayer: boolean;
     name: string | null;
     color: string;
     colorInformation: {

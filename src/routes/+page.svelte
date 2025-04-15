@@ -39,6 +39,8 @@
     players: [
       {
         id: 0,
+        dataId: null,
+        anonPlayer: true,
         name: null,
         color: "blue",
         colorInformation: {
@@ -49,6 +51,8 @@
       },
       {
         id: 1,
+        dataId: null,
+        anonPlayer: true,
         name: null,
         color: "blue",
         colorInformation: {
@@ -59,6 +63,8 @@
       },
       {
         id: 2,
+        dataId: null,
+        anonPlayer: true,
         name: null,
         color: "red",
         colorInformation: {
@@ -69,6 +75,8 @@
       },
       {
         id: 3,
+        dataId: null,
+        anonPlayer: true,
         name: null,
         color: "red",
         colorInformation: {
@@ -103,17 +111,28 @@
 
   onMount(async () => {
     isLoading = true;
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error) {
-      console.error("Error fetching user data:", error);
+    const { data, error } = await supabase.auth.getSession();
+    if (!data.session) {
+      isLoading = false;
       return;
     };
 
-    userStore.set(data.user);
+    if (error) {
+      console.error("Error fetching session:", error);
+      return;
+    };
+ 
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError) {
+      console.error("Error fetching user data:", userError);
+      return;
+    } else {
+      userStore.set(data.user);
+    };
 
     isLoading = false;
-  })
+  });
 
   const trackStats = () => {
     resetStats();
@@ -180,7 +199,7 @@
 
 <div class="flex flex-col h-screen bg-[#121212] py-4 px-4">
   {#if isLoading}
-      <LoadSpinner />
+    <LoadSpinner />
   {/if}
   {#if activeTab === "" && !isLoading}
     <TeamInfo bind:gameInfo />

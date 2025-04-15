@@ -1,8 +1,10 @@
 <script lang="ts">
   import { supabase } from "$lib/supabase";
+  import { onMount } from "svelte";
   import { colors } from "./colors";
   import type { GameInfo } from "./types.ds";
   import UserIcon from "./user-icon.svelte";
+  import LoadSpinner from "./load-spinner.svelte";
 
   export let gameInfo: GameInfo;
   export let gameId: number;
@@ -11,6 +13,8 @@
 
   let errorMessage = "";
   let keyswitch = {};
+  let isLoading = false;
+  let usersList: any | null = [];
 
   const initializeGame = async () => {
     // Id prevents multiple games from being saved in one session
@@ -81,99 +85,149 @@
     keyswitch = {};
   };
 
-  $: inputSpectateCode, (() => {
-    if (inputSpectateCode.length > 0) {
-      inputSpectateCode = inputSpectateCode.toUpperCase();
+  onMount(async () => {
+    isLoading = true;
+
+    const { data, error } = await supabase.from("user").select("*");
+
+    if (error) {
+      console.error("Error fetching user data:", error);
+      return;
     }
-  })();
+
+    usersList = data;
+
+    isLoading = false;
+  });
+
+  const seekUser = (typedName, index) => {
+    console.log(usersList);
+    const user = usersList.filter((user) => {
+      console.log("user: ", user);
+      console.log("Typed name: ", typedName);
+
+      return user.name.toLowerCase() === typedName.toLowerCase();
+    });
+
+    if (user.length === 1) {
+      gameInfo.players[index].name = user[0].name;
+      gameInfo.players[index].dataId = user[0].id;
+      gameInfo.players[index].anonPlayer = false; 
+    } else {
+      gameInfo.players[index].anonPlayer = true;
+    };
+  };
+
+  $: inputSpectateCode,
+    (() => {
+      if (inputSpectateCode.length > 0) {
+        inputSpectateCode = inputSpectateCode.toUpperCase();
+      }
+    })();
 </script>
 
-{#key keyswitch}
-  <div class="flex flex-col gap-4 pb-4">
-    <div
-      id="full-container"
-      class="flex flex-col gap-5 w-full text-center h-full px-4 py-2 mt-4 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
-    >
-      <p class="text-lg">Welcome to Washoo-matic!</p>
-      <p class="text-sm">Please input player names.</p>
+{#if !isLoading}
+  {#key keyswitch}
+    <div class="flex flex-col gap-4 pb-4">
+      <div
+        id="full-container"
+        class="flex flex-col gap-5 w-full text-center h-full px-4 py-2 mt-4 text-[#B0BEC5] bg-[#1E1E1E] rounded-xl"
+      >
+        <p class="text-lg">Welcome to Washoo-matic!</p>
+        <p class="text-sm">Please input player names.</p>
 
-      {#each gameInfo.players as player, index}
-        <div class="flex items-center justify-center">
-          <label for="player{index + 1}" class="text-sm mr-2">{index + 1}: </label>
+        {#each gameInfo.players as player, index}
+          <div class="flex items-center justify-center">
+            <label for="player{index + 1}" class="text-sm mr-2"
+              >{index + 1}:
+            </label>
+            <input
+              bind:value={player.name}
+              on:keyup={() => {
+                seekUser(player.name, index);
+              }}
+              id="player{index + 1}"
+              style="border-color: {player.colorInformation.hex}"
+              class="border rounded-full px-2 bg-[#121212]"
+              type="text"
+            />
+
+            {#if player.anonPlayer}
+              <div class="w-6 h-6 mx-6">
+                <UserIcon />
+              </div>
+            {:else}
+              <div class="w-6 h-6 mx-6 text-green-500">
+                <p>&checkmark;</p>
+              </div>
+            {/if}
+
+            {#if index === 1 || index === 2}
+              <button
+                on:click|preventDefault={() => swapColor(index)}
+                tabindex="-1"
+                style="background-color: {player.colorInformation.hex}"
+                class="h-5 w-5"
+              ></button>
+            {:else}
+              <div class="w-5" />
+            {/if}
+          </div>
+        {/each}
+
+        <button
+          on:click|preventDefault={async () => {
+            if (
+              gameInfo.players.filter((player) => player.name === null)
+                .length === 0
+            ) {
+              gameInfo.spectateCode = (Math.random() + 1)
+                .toString(36)
+                .substring(7)
+                .toUpperCase();
+              gameInfo.currentPlayer = Math.floor(Math.random() * 4);
+              gameInfo.shootingFirst =
+                gameInfo.players[gameInfo.currentPlayer].color;
+              await initializeGame();
+            }
+          }}
+          class="bg-green-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
+          ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+            >START GAME</span
+          ></button
+        >
+        <p class="text-xs mt-4 justify-self-end px-8">
+          For four player, use first name in each box. For two player, use first
+          and last name on the same team color.
+        </p>
+      </div>
+
+      <div
+        class="rounded-xl flex flex-col gap-2 bg-[#1E1E1E] px-4 py-2 text-[#B0BEC5] text-center"
+      >
+        <p>Spectate Game</p>
+        <p class="text-xs">
+          View a game in progress by inputting the spectate code.
+        </p>
+        <div class="flex gap-4 items-center justify-center my-4">
           <input
-            bind:value={player.name}
-            id="player{index + 1}"
-            style="border-color: {player.colorInformation.hex}"
-            class="border rounded-full px-2 bg-[#121212]"
+            maxlength="6"
+            bind:value={inputSpectateCode}
+            id="player1"
+            class="border-purple-500 border rounded-full px-2 bg-[#121212] text-center"
             type="text"
           />
-
-          <div class="w-6 h-6 mx-6">
-            <UserIcon />
-          </div>
-
-          {#if index === 1 || index === 2}
-            <button
-              on:click|preventDefault={() => swapColor(index)}
-              tabindex='-1'
-              style="background-color: {player.colorInformation.hex}"
-              class="h-5 w-5"
-            ></button>
-          {:else}
-            <div class="w-5" />
-          {/if}
         </div>
-      {/each}
-
-      <button
-        on:click|preventDefault={async () => {
-          if (
-            gameInfo.players.filter((player) => player.name === null).length ===
-            0
-          ) {
-            gameInfo.spectateCode = (Math.random() + 1)
-              .toString(36)
-              .substring(7)
-              .toUpperCase();
-            gameInfo.currentPlayer = Math.floor(Math.random() * 4);
-            gameInfo.shootingFirst =
-              gameInfo.players[gameInfo.currentPlayer].color;
-            await initializeGame();
-          }
-        }}
-        class="bg-green-500 rounded-full w-1/2 mx-auto text-white font-bold mt-2 px-4 py-1 text-sm"
-        ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">START GAME</span
-        ></button
-      >
-      <p class="text-xs mt-4 justify-self-end px-8">
-        For four player, use first name in each box. For two player, use first
-        and last name on the same team color.
-      </p>
-    </div>
-
-    <div
-      class="rounded-xl flex flex-col gap-2 bg-[#1E1E1E] px-4 py-2 text-[#B0BEC5] text-center"
-    >
-      <p>Spectate Game</p>
-      <p class="text-xs">
-        View a game in progress by inputting the spectate code.
-      </p>
-      <div class="flex gap-4 items-center justify-center my-4">
-        <input
-          maxlength="6"
-          bind:value={inputSpectateCode}
-          id="player1"
-          class="border-purple-500 border rounded-full px-2 bg-[#121212] text-center"
-          type="text"
-        />
+        <button
+          on:click|preventDefault={spectateGame}
+          class="bg-purple-500 rounded-full w-1/2 mx-auto text-white font-bold px-4 py-1 mb-4 text-sm"
+          ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">SPECTATE</span
+          ></button
+        >
+        <p>{errorMessage}</p>
       </div>
-      <button
-        on:click|preventDefault={spectateGame}
-        class="bg-purple-500 rounded-full w-1/2 mx-auto text-white font-bold px-4 py-1 mb-4 text-sm"
-        ><span class="drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">SPECTATE</span
-        ></button
-      >
-      <p>{errorMessage}</p>
     </div>
-  </div>
-{/key}
+  {/key}
+{:else}
+  <LoadSpinner />
+{/if}
